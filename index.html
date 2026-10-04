@@ -619,9 +619,8 @@ async function loadQuizPhoto(b){
  }catch(e){holder.innerHTML='<span>Photo could not load. Use the species details and choices.</span>';}
 }
 
-function uniqueChoices(answer,count=4,seed=0,easier=false){
- const name=typeof answer==="string"?answer:answer.common,obj=getBird(name),pool=[];
- const preferred=easier?[]:hardPairs.filter(p=>p.includes(name)).flat().filter(x=>x!==name);
+function uniqueChoices(answer,count=4,seed=0){
+ const name=typeof answer==="string"?answer:answer.common,obj=getBird(name),pool=[],preferred=hardPairs.filter(p=>p.includes(name)).flat().filter(x=>x!==name);
  for(const x of preferred)if(!pool.includes(x)&&birds.some(b=>b.common===x))pool.push(x);
  const nearby=birds.filter(b=>b.common!==name&&(b.family===obj.family||b.habitat===obj.habitat));
  for(const b of deterministicOrder(nearby,seed+13))if(!pool.includes(b.common))pool.push(b.common);
