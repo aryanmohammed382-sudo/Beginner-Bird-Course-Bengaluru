@@ -366,6 +366,33 @@ function firstSlideAdvice(b){
  return {notice:[notice1,notice2,notice3],sound};
 }
 
+const hardPairs=[
+ ["Common Myna","Jungle Myna"],
+ ["Great Egret","Intermediate Egret"],
+ ["Little Egret","Cattle Egret"],
+ ["Black Kite","Brahminy Kite"],
+ ["Shikra","Black-winged Kite"],
+ ["Common Kingfisher","Stork-billed Kingfisher"],
+ ["Pied Kingfisher","Common Kingfisher"],
+ ["Jungle Babbler","Large Grey Babbler"],
+ ["Common Sandpiper","Green Sandpiper"],
+ ["Common Greenshank","Wood Sandpiper"],
+ ["Black-winged Stilt","Pied Avocet"],
+ ["Red-wattled Lapwing","Yellow-wattled Lapwing"],
+ ["Coppersmith Barbet","White-cheeked Barbet"],
+ ["Red-vented Bulbul","Red-whiskered Bulbul"],
+ ["Rose-ringed Parakeet","Alexandrine Parakeet"],
+ ["Asian Koel","Common Hawk-Cuckoo"],
+ ["Little Cormorant","Indian Cormorant"],
+ ["Great Cormorant","Little Cormorant"],
+ ["Indian Pond Heron","Cattle Egret"],
+ ["Spotted Owlet","Indian Scops-Owl"],
+ ["Pied Bushchat","Common Stonechat"],
+ ["White-rumped Shama","Oriental Magpie-Robin"],
+ ["Yellow-footed Green-Pigeon","Orange-breasted Green-Pigeon"],
+ ["Black Eagle","Crested Serpent-Eagle"]
+];
+
 function fieldAdvice(b){
  const hard=hardPairs.find(p=>p.includes(b.common))?.filter(x=>x!==b.common)||[];
  const base=clues[b.common];
