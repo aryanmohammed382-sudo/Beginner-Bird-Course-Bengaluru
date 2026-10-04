@@ -497,9 +497,94 @@ function render(){
  const first=s.part===0;
  el.innerHTML='<div class="slide birdslide"><div class="eyebrow">BIRD '+b.id+' OF '+birds.length+' • SLIDE '+(s.part+1)+' OF 2</div><div class="birdlayout"><div class="visual"><div class="photo" id="photo"><span>Finding a photograph…</span></div><div class="mediabtn"><a target="_blank" rel="noopener" href="'+links.photo+'">More photos</a><a target="_blank" rel="noopener" href="'+links.audio+'">Listen to recordings</a></div><p class="smallnote">Media opens from Wikimedia Commons / Xeno-canto. Check the recording or photo page for the exact species, location and licence.</p></div><div class="lessontext"><h2>'+esc(b.common)+'</h2><p class="subtitle"><i>'+esc(b.scientific)+'</i> · '+esc(b.family)+'</p><span class="tag">'+esc(b.habitat)+'</span>'+(first?'<h3>Meet the bird</h3><p>'+esc(clue)+'</p><h3>What to notice</h3><ul>'+firstSlideAdvice(b).notice.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><h3>Sound</h3><p>'+esc(firstSlideAdvice(b).sound)+'</p>':'<h3>Recognize it in the field</h3><p>'+esc(fieldAdvice(b).recognize)+'</p><h3>Food, behaviour and nesting</h3><p>'+esc(fieldAdvice(b).behaviour)+'</p><h3>How to tell it apart</h3><ul>'+fieldAdvice(b).compare.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>')+'</div></div></div>';
  loadPhoto(b);
+ warmPhotoCacheForSlide(slide);
 }
-async function loadPhoto(b){const holder=document.querySelector("#photo");if(!holder)return;try{const wp="https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(b.scientific);const j=await fetch(wp).then(r=>r.ok?r.json():null);const img=j?.originalimage?.source||j?.thumbnail?.source;if(img&&document.querySelector("#photo")===holder){const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.src=img;im.onerror=()=>commonsPhoto(b,holder);holder.innerHTML="";holder.appendChild(im);return;}commonsPhoto(b,holder);}catch(e){commonsPhoto(b,holder);}}
-async function commonsPhoto(b,holder){try{const q=encodeURIComponent('"'+b.scientific+'"');const url="https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="+q+"&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1100&format=json&origin=*";const j=await fetch(url).then(r=>r.json());const pages=Object.values(j.query?.pages||{});const good=pages.filter(x=>{const t=(x.title||"").toLowerCase();return t.includes(b.scientific.toLowerCase())||t.includes(b.common.toLowerCase())}).find(x=>x.imageinfo?.[0]?.thumburl||x.imageinfo?.[0]?.url);if(good&&document.querySelector("#photo")===holder){const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.src=good.imageinfo[0].thumburl||good.imageinfo[0].url;holder.innerHTML="";holder.appendChild(im);}else holder.innerHTML="<span>No verified taxon image found. Use More photos to browse.</span>";}catch(e){holder.innerHTML="<span>Image could not load. Use More photos to browse.</span>";}}
+const PHOTO_CACHE_KEY="bengaluruBirdPhotoCacheV2";
+function readPhotoCache(){
+ try{return JSON.parse(localStorage.getItem(PHOTO_CACHE_KEY)||"{}");}catch(e){return {};}
+}
+function savePhotoCache(cache){
+ try{localStorage.setItem(PHOTO_CACHE_KEY,JSON.stringify(cache));}catch(e){}
+}
+function preloadImage(url){
+ if(!url)return;
+ const im=new Image();
+ im.decoding="async";
+ im.src=url;
+}
+async function resolvePhotoUrl(b){
+ const cache=readPhotoCache();
+ if(cache[b.scientific])return cache[b.scientific];
+ try{
+  const wp="https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(b.scientific);
+  const j=await fetch(wp).then(r=>r.ok?r.json():null);
+  // Prefer Wikipedia's thumbnail so the browser downloads a much smaller image.
+  const img=j?.thumbnail?.source||j?.originalimage?.source;
+  if(img){
+   cache[b.scientific]=img;
+   savePhotoCache(cache);
+   preloadImage(img);
+   return img;
+  }
+ }catch(e){}
+ return null;
+}
+function warmPhotoCacheForSlide(slideNumber){
+ const birdStart=intro.length;
+ const birdIndex=Math.floor(Math.max(0,slideNumber-birdStart)/2);
+ const targets=[];
+ for(let n=birdIndex;n<Math.min(birds.length,birdIndex+5);n++)targets.push(birds[n]);
+ targets.forEach(b=>resolvePhotoUrl(b));
+}
+async function loadPhoto(b){
+ const holder=document.querySelector("#photo");if(!holder)return;
+ const cached=readPhotoCache()[b.scientific];
+ if(cached){
+  const im=document.createElement("img");
+  im.alt=b.common+" ("+b.scientific+")";
+  im.loading="eager";
+  im.decoding="async";
+  im.src=cached;
+  im.onerror=()=>{delete readPhotoCache()[b.scientific];commonsPhoto(b,holder);};
+  holder.innerHTML="";holder.appendChild(im);
+  return;
+ }
+ try{
+  const img=await resolvePhotoUrl(b);
+  if(img&&document.querySelector("#photo")===holder){
+   const im=document.createElement("img");
+   im.alt=b.common+" ("+b.scientific+")";
+   im.loading="eager";
+   im.decoding="async";
+   im.src=img;
+   im.onerror=()=>commonsPhoto(b,holder);
+   holder.innerHTML="";holder.appendChild(im);
+   return;
+  }
+  commonsPhoto(b,holder);
+ }catch(e){commonsPhoto(b,holder);}
+}
+async function commonsPhoto(b,holder){
+ try{
+  const cache=readPhotoCache();
+  if(cache[b.scientific]){
+   preloadImage(cache[b.scientific]);
+   return;
+  }
+  const q=encodeURIComponent('"'+b.scientific+'"');
+  const url="https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="+q+"&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=900&format=json&origin=*";
+  const j=await fetch(url).then(r=>r.json());
+  const pages=Object.values(j.query?.pages||{});
+  const good=pages.filter(x=>{const t=(x.title||"").toLowerCase();return t.includes(b.scientific.toLowerCase())||t.includes(b.common.toLowerCase());}).find(x=>x.imageinfo?.[0]?.thumburl||x.imageinfo?.[0]?.url);
+  const img=good?.imageinfo?.[0]?.thumburl||good?.imageinfo?.[0]?.url;
+  if(img){
+   cache[b.scientific]=img;savePhotoCache(cache);preloadImage(img);
+   if(document.querySelector("#photo")===holder){
+    const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.loading="eager";im.decoding="async";im.src=img;holder.innerHTML="";holder.appendChild(im);
+   }
+  }else holder.innerHTML="<span>No verified taxon image found. Use More photos to browse.</span>";
+ }catch(e){holder.innerHTML="<span>Image could not load. Use More photos to browse.</span>";}
+}
 
 
 // ---------- 2,500-question field assessment ----------
@@ -707,7 +792,7 @@ document.addEventListener("keydown",e=>{
 try{
  const practiceMode=new URLSearchParams(window.location.search).get("practice")==="1";
  if(practiceMode){document.body.classList.add("practiceStandalone");startQuiz(true);}
- else{render();}
+ else{render();warmPhotoCacheForSlide(slide);}
 }catch(e){
  console.error("Course render failed:",e);
  const practiceMode=new URLSearchParams(window.location.search).get("practice")==="1";
