@@ -19,7 +19,7 @@ input,select{padding:12px;border:1px solid #cbd5cd;border-radius:9px;background:
 <body>
 <header><h1>Birds of Bengaluru</h1><p>A 222-species identification course focused on field marks, habitat, behaviour, comparison, photography and sound. Built for beginner-to-intermediate birders in Bengaluru and nearby habitats.</p></header>
 <main>
-<section class="coursebar"><div id="progress">Welcome</div><div class="nav"><button id="prev">← Previous</button><button id="next">Next →</button><button id="practiceBtn" class="practiceNav">Practice 250</button></div></section>
+<section class="coursebar"><div id="progress">Welcome</div><div class="nav"><button id="prev">← Previous</button><button id="next">Next →</button><button id="practiceBtn" class="practiceNav">Practice Questions</button></div></section>
 <section id="lesson" class="lesson" aria-live="polite"></section><section id="practice" class="quizWrap quizHidden"><div class="quizCard" id="quizCard"></div></section>
 <script>
 const raw = `
@@ -435,5 +435,5 @@ document.querySelector("#practiceBtn").onclick=startQuiz;
 document.querySelector("#prev").onclick=()=>{slide=Math.max(0,slide-1);render();};
 document.querySelector("#next").onclick=()=>{slide=Math.min(total-1,slide+1);render();};
 document.addEventListener("keydown",e=>{if(e.key==="ArrowRight")document.querySelector("#next").click();if(e.key==="ArrowLeft")document.querySelector("#prev").click();});
-render();</script>
+try{render();}catch(e){console.error("Course render failed:",e);document.querySelector("#lesson").innerHTML="<div class=\"slide\"><h2>Course loading error</h2><p>The lesson engine encountered an error. Refresh the page to retry.</p></div>";}</script>
 </body></html>
