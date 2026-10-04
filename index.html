@@ -346,7 +346,7 @@ function buildAnswerSequence(){
  for(let pass=0;pass<5;pass++)seq.push(...deterministicOrder(birds,(pass+1)*17));
  let i=0;
  while(seq.length<QUIZ_TOTAL){
-  const b=birds[(i*37+11)%birds.length];
+  const b=birds[(i*41+11)%birds.length];
   if(seq[seq.length-1]?.common!==b.common)seq.push(b);
   i++;
  }
