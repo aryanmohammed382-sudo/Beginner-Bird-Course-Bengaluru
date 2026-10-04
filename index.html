@@ -303,6 +303,69 @@ const birds=raw;
 let slide=0;
 const total=intro.length+birds.length*2;
 function media(b){const q=encodeURIComponent(b.common+" "+b.scientific),audioQ=encodeURIComponent(b.common);return {photo:"https://commons.wikimedia.org/w/index.php?search="+q+"&title=Special:MediaSearch&type=image",audio:"https://www.xeno-canto.org/explore?query="+audioQ,ml:"https://search.macaulaylibrary.org/catalog?searchField=species&view=grid"};}
+function firstSlideAdvice(b){
+ const base=clues[b.common];
+ const family=b.family, h=b.habitat;
+ const micro={
+  "Urban & gardens":"Check mature trees, lawns, walls, balconies and garden edges rather than scanning the whole sky.",
+  "Woodland":"Look into shaded foliage, dense understory, tree trunks and woodland edges; small birds may stay hidden until they move.",
+  "Grassland & scrub":"Scan low scrub, grass stems, fence lines and bare patches; pause often because many birds stay low and rely on camouflage.",
+  "Wetlands":"Work the shallow edge first: reeds, muddy margins, floating vegetation, exposed banks and low overhanging branches.",
+  "Open country":"Scan short grass, bare ground, field margins, isolated bushes and exposed perches before checking distant trees.",
+  "Seasonal migrant":"Check open water, mud, wintering fields and sheltered vegetation; compare carefully because several similar migrants can occur together."
+ }[h]||"Watch the exact perch, feeding patch and vegetation around the bird rather than treating the whole habitat as one clue.";
+ const visual={
+  "Ardeidae":"Bill shape and colour, leg colour, neck length and the amount of white visible in flight.",
+  "Accipitridae":"Wing shape, tail shape, head projection and the strongest pale/dark pattern on the underparts.",
+  "Falconidae":"Pointed wings, dark hood or moustache pattern, tail shape and the speed and style of flight.",
+  "Muscicapidae":"Eyebrow, throat, wing bars, tail pattern and whether it sallies from one perch and returns to cover.",
+  "Sturnidae":"Head and body colour, eye skin, bill colour and wing pattern; check these before judging a distant myna or starling.",
+  "Alcedinidae":"Bill size and colour, head pattern, throat/underparts and the contrast between upperparts and belly.",
+  "Scolopacidae":"Leg colour, bill length, shoulder pattern, back streaking and whether it probes, pecks or bobs while feeding.",
+  "Charadriidae":"Face pattern, breast band, leg colour and any coloured wattle or forehead patch.",
+  "Anatidae":"Bill pattern, head shape, flank markings, size and whether the bird is dabbling, diving or grazing.",
+  "Strigidae":"Eye colour, facial disk, streaking, ear tufts if present and the exact roosting position.",
+  "Psittaculidae":"Tail length and shape, head colour, neck collar or cheek patch, and the flock's flight silhouette.",
+  "Columbidae":"Neck pattern, wing markings, tail pattern and overall body colour; check whether it feeds on the ground or in trees.",
+  "Alaudidae":"Crown, breast streaking, wing pattern and tail; note whether it runs, walks or sings from an exposed perch.",
+  "Motacillidae":"Eyebrow, streaking, back colour, tail length and the bird's walking or tail-bobbing style.",
+  "Pycnonotidae":"Crest shape, eyebrow or cheek pattern, throat colour and especially the colour of the undertail or vent.",
+  "Megalaimidae":"Face and throat patches, bill colour, body green, crown pattern and the repeated call that often gives the bird away.",
+  "Cuculidae":"Tail length, wing pattern and head/body colour; pay close attention to the call because cuckoos can be hard to see.",
+  "Monarchidae":"Head and throat pattern, wing contrast and tail length; watch for short sallies from foliage.",
+  "Rhipiduridae":"Tail spread and shape, contrasting throat/breast pattern and the way the bird fans its tail while moving through cover.",
+  "Oriolidae":"Bright body colour, eye stripe or head pattern, bill colour and the rounded wing shape when it moves between trees."
+ }[family]||("the face, bill, wings and tail together, then the bird's posture and movement");
+ const notice1=base||("Start with "+visual.toLowerCase());
+ const notice2=micro;
+ const notice3="Then watch its behaviour: "+(
+  family==="Alcedinidae"?"whether it waits on a low perch and plunges toward water":
+  family==="Muscicapidae"?"whether it launches from a perch to catch an insect and returns to cover":
+  family==="Scolopacidae"?"how it feeds at the water edge and whether its rear bobs":
+  family==="Accipitridae"?"whether it soars, hovers, glides or makes short bursts between trees":
+  family==="Ardeidae"?"whether it stalks slowly, freezes and then thrusts its bill":
+  family==="Sturnidae"?"whether it walks on open ground, probes lawns or feeds in fruiting trees":
+  family==="Psittaculidae"?"whether it climbs through foliage or travels in a noisy flock":
+  family==="Columbidae"?"whether it feeds on the ground, in fruiting trees or in a flock":
+  "where it sits, how it moves and what it is doing before deciding on the name"
+ );
+ const soundFromClue=base&&/call|song|sound|voice|whistl|koo|coppersmith|tuk-tuk|mimic/i.test(base);
+ const sound= soundFromClue
+  ? "Start with the clue already associated with this species: "+base.split(";")[0]+". Listen for its rhythm, pitch and repetition, then compare a second recording."
+  : (
+   family==="Cuculidae"?"Listen for the repeated, species-specific phrase before trying to see the bird; cuckoos often reveal themselves from concealed foliage.":
+   family==="Alcedinidae"?"Listen for a short, sharp call around the water edge and note whether it is given during a fast low flight or from a perch.":
+   family==="Muscicapidae"?"Listen for a short call or phrase from dense foliage, then scan the perch where the sound came from.":
+   family==="Strigidae"?"Listen at dusk or dawn for a short, repeated phrase from the same patch of trees; avoid relying on one distant note.":
+   family==="Psittaculidae"?"Listen for the flock's sharp flight calls before searching the canopy; use the call to locate the group, then confirm with tail and head pattern.":
+   family==="Pycnonotidae"?"Listen for a repeated, ringing or chatty phrase from foliage; use the voice to locate the bird before checking the crest and face.":
+   family==="Ardeidae"?"Listen for low croaks or calls around the wetland, but confirm with bill, leg colour and posture because several herons overlap in habitat.":
+   family==="Sturnidae"?"Listen for chatter, whistles or mimicry around feeding flocks, then confirm the bird visually because several mynas and starlings share noisy calls.":
+   "Listen for the species' repeated call or song from the exact habitat where you found it; compare rhythm, pitch and phrase length with another recording."
+  );
+ return {notice:[notice1,notice2,notice3],sound};
+}
+
 function fieldAdvice(b){
  const hard=hardPairs.find(p=>p.includes(b.common))?.filter(x=>x!==b.common)||[];
  const base=clues[b.common];
@@ -379,7 +442,7 @@ function render(){
  if(s.kind==="intro"){const d=s.data;el.innerHTML='<div class="slide intro"><div class="eyebrow">FIELD SKILLS</div><h2>'+esc(d.title)+'</h2><p class="subtitle">'+esc(d.sub)+'</p><p class="lead">'+esc(d.body)+'</p><h3>Remember</h3><ul>'+d.tips.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ul></div>';return;}
  const b=s.data, links=media(b), clue=clues[b.common]||"Begin with its overall shape, main colours, bill and tail. Watch how it moves and where it feeds; compare a few regional examples before deciding.";
  const first=s.part===0;
- el.innerHTML='<div class="slide birdslide"><div class="eyebrow">BIRD '+b.id+' OF '+birds.length+' • SLIDE '+(s.part+1)+' OF 2</div><div class="birdlayout"><div class="visual"><div class="photo" id="photo"><span>Finding a photograph…</span></div><div class="mediabtn"><a target="_blank" rel="noopener" href="'+links.photo+'">More photos</a><a target="_blank" rel="noopener" href="'+links.audio+'">Listen to recordings</a></div><p class="smallnote">Media opens from Wikimedia Commons / Xeno-canto. Check the recording or photo page for the exact species, location and licence.</p></div><div class="lessontext"><h2>'+esc(b.common)+'</h2><p class="subtitle"><i>'+esc(b.scientific)+'</i> · '+esc(b.family)+'</p><span class="tag">'+esc(b.habitat)+'</span>'+(first?'<h3>Meet the bird</h3><p>'+esc(clue)+'</p><h3>What to notice</h3><ul><li>Overall size and body shape</li><li>Bill, tail and posture</li><li>Where it is feeding or resting</li></ul><h3>Sound</h3><p>Listen for its repeated call or song. Notice the rhythm and pitch, then compare more than one recording.</p>':'<h3>Recognize it in the field</h3><p>'+esc(fieldAdvice(b).recognize)+'</p><h3>Food, behaviour and nesting</h3><p>'+esc(fieldAdvice(b).behaviour)+'</p><h3>How to tell it apart</h3><ul>'+fieldAdvice(b).compare.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>')+'</div></div></div>';
+ el.innerHTML='<div class="slide birdslide"><div class="eyebrow">BIRD '+b.id+' OF '+birds.length+' • SLIDE '+(s.part+1)+' OF 2</div><div class="birdlayout"><div class="visual"><div class="photo" id="photo"><span>Finding a photograph…</span></div><div class="mediabtn"><a target="_blank" rel="noopener" href="'+links.photo+'">More photos</a><a target="_blank" rel="noopener" href="'+links.audio+'">Listen to recordings</a></div><p class="smallnote">Media opens from Wikimedia Commons / Xeno-canto. Check the recording or photo page for the exact species, location and licence.</p></div><div class="lessontext"><h2>'+esc(b.common)+'</h2><p class="subtitle"><i>'+esc(b.scientific)+'</i> · '+esc(b.family)+'</p><span class="tag">'+esc(b.habitat)+'</span>'+(first?'<h3>Meet the bird</h3><p>'+esc(clue)+'</p><h3>What to notice</h3><ul>'+firstSlideAdvice(b).notice.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><h3>Sound</h3><p>'+esc(firstSlideAdvice(b).sound)+'</p>':'<h3>Recognize it in the field</h3><p>'+esc(fieldAdvice(b).recognize)+'</p><h3>Food, behaviour and nesting</h3><p>'+esc(fieldAdvice(b).behaviour)+'</p><h3>How to tell it apart</h3><ul>'+fieldAdvice(b).compare.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>')+'</div></div></div>';
  loadPhoto(b);
 }
 async function loadPhoto(b){const holder=document.querySelector("#photo");if(!holder)return;try{const wp="https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(b.scientific);const j=await fetch(wp).then(r=>r.ok?r.json():null);const img=j?.originalimage?.source||j?.thumbnail?.source;if(img&&document.querySelector("#photo")===holder){const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.src=img;im.onerror=()=>commonsPhoto(b,holder);holder.innerHTML="";holder.appendChild(im);return;}commonsPhoto(b,holder);}catch(e){commonsPhoto(b,holder);}}
