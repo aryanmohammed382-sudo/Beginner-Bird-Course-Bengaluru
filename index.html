@@ -12,22 +12,13 @@ main{max-width:1250px;margin:auto;padding:24px 4vw}.controls{position:sticky;top
 input,select{padding:12px;border:1px solid #cbd5cd;border-radius:9px;background:white;font-size:15px}.count{color:var(--muted);margin:15px 0}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;overflow:hidden;box-shadow:0 2px 10px #0000000b}.photo{height:220px;background:#e7ece8;display:flex;align-items:center;justify-content:center}.photo img{width:100%;height:100%;object-fit:cover}.photo span{color:var(--muted);padding:20px;text-align:center}.body{padding:17px}.body h2{font-size:21px;margin:0 0 4px}.sci{font-style:italic;color:var(--muted);font-size:14px}.tag{display:inline-block;background:#e5f1e9;color:#215d3e;border-radius:999px;padding:4px 8px;font-size:12px;margin:9px 4px 9px 0}.fact{margin:8px 0;font-size:14px;line-height:1.45}.fact b{color:#31513f}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions a{color:#fff;background:#236b45;text-decoration:none;padding:9px 11px;border-radius:8px;font-size:13px}.actions a.secondary{background:#53665a}.sources{margin-top:30px;padding:18px;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--muted);line-height:1.6}
 @media(max-width:700px){.controls{grid-template-columns:1fr;position:static}.grid{grid-template-columns:1fr}}
-</style>
+.coursebar{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1100px;margin:0 auto 16px;color:var(--muted);font-weight:600}.nav{display:flex;gap:8px}.nav button,.mediabtn a{border:0;border-radius:9px;padding:11px 16px;background:#236b45;color:#fff;font:inherit;text-decoration:none;cursor:pointer}.nav button:disabled{opacity:.4;cursor:not-allowed}.slide{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 5px 22px #0000000b;padding:clamp(20px,4vw,48px);max-width:1100px;margin:auto;min-height:450px}.intro{max-width:900px}.eyebrow{font-size:12px;letter-spacing:.12em;font-weight:800;color:#236b45}.slide h2{font-size:clamp(28px,4vw,42px);margin:12px 0}.subtitle{color:var(--muted);font-size:16px}.lead{font-size:20px;line-height:1.6;max-width:760px;margin:32px 0}.slide h3{margin:24px 0 8px}.slide li,.slide p{line-height:1.6}.birdlayout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,1fr);gap:30px;margin-top:22px}.photo{height:360px;background:#e7ece8;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}.photo img{width:100%;height:100%;object-fit:contain}.mediabtn{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.mediabtn a{font-size:14px}.smallnote{font-size:12px;color:var(--muted);line-height:1.45}.tag{display:inline-block;background:#e5f1e9;color:#215d3e;border-radius:999px;padding:5px 9px;font-size:12px;margin:8px 0}@media(max-width:750px){.birdlayout{grid-template-columns:1fr}.photo{height:280px}.coursebar{align-items:flex-start;flex-direction:column}.slide{min-height:0}}</style>
 </head>
 <body>
 <header><h1>Birds of Bengaluru</h1><p>A 222-species identification course focused on field marks, habitat, behaviour, comparison, photography and sound. Built for beginner-to-intermediate birders in Bengaluru and nearby habitats.</p></header>
 <main>
-<div class="controls">
-<input id="q" placeholder="Search common name, scientific name, or ID clue…">
-<select id="group"><option value="">All groups</option></select>
-<select id="habitat"><option value="">All habitats</option><option>Urban & gardens</option><option>Woodland</option><option>Wetlands</option><option>Grassland & scrub</option><option>Open country</option><option>Seasonal migrant</option></select>
-</div>
-<div class="count" id="count"></div><section class="grid" id="grid"></section>
-<section class="sources"><b>Media & accuracy policy</b><br>
-Photos are retrieved from Wikimedia Commons search results at viewing time rather than copied into this repository; the site checks the returned title against the requested species name where possible. Each card also links to Cornell eBird/Macaulay Library for regional photographs and sound recordings, and to Xeno-canto for field recordings. Always check the recording/photo page for its attribution and licence before reusing media outside this course. Species names are aligned to the Bengaluru regional checklist used for this course; local occurrence can be seasonal or habitat-specific.
-<br><br><b>Important:</b> this repository intentionally links to authoritative media rather than redistributing third-party recordings. The sound buttons open the relevant recording/search collection so learners can hear the species and inspect attribution.
-</section>
-</main>
+<section class="coursebar"><div id="progress">Welcome</div><div class="nav"><button id="prev">← Previous</button><button id="next">Next →</button></div></section>
+<section id="lesson" class="lesson" aria-live="polite"></section>
 <script>
 const raw = `
 House Crow|Corvus splendens|Corvidae|Urban & gardens
@@ -297,39 +288,33 @@ const clues={
 "White-rumped Shama":"Dark glossy songbird with white rump and long graduated tail; superb songster in dense vegetation."
 };
 
-function norm(s){return s.toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9 ]/g," ")}
-function mediaLinks(b){
- const q=encodeURIComponent(b.common+" "+b.scientific);
- return {
-  image:"https://commons.wikimedia.org/w/index.php?search="+q+"&title=Special:MediaSearch&type=image",
-  audio:"https://www.xeno-canto.org/explore?query="+q,
-  macaulay:"https://search.macaulaylibrary.org/catalog?searchField=species&view=grid
- };
-}
-async function loadImage(card,b){
- const holder=card.querySelector(".photo");
- const q=encodeURIComponent(b.common+" "+b.scientific);
- try{
-  const u="https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="+q+"&gsrnamespace=6&gsrlimit=5&prop=imageinfo&iiprop=url&iiurlwidth=900&format=json&origin=*";
-  const j=await fetch(u).then(r=>r.json());
-  const pages=Object.values(j.query?.pages||{});
-  const p=pages.find(x=>x.imageinfo?.[0]?.thumburl||x.imageinfo?.[0]?.url);
-  if(p){const im=document.createElement("img");im.loading="lazy";im.alt=b.common+" — Wikimedia Commons";im.src=p.imageinfo[0].thumburl||p.imageinfo[0].url;im.onerror=()=>holder.innerHTML="<span>Image unavailable — open the Commons link below.</span>";holder.innerHTML="";holder.appendChild(im);}
- }catch(e){}
-}
-function card(b){
- const c=document.createElement("article");c.className="card";
- const links=mediaLinks(b); const clue=clues[b.common]||("Field lesson: learn the silhouette, primary colours, bill shape, habitat and behaviour first; then confirm with a regional photograph and recording.");
- c.innerHTML='<div class="photo"><span>Loading Wikimedia Commons image…</span></div><div class="body"><h2>'+b.id+'. '+b.common+'</h2><div class="sci">'+b.scientific+'</div><span class="tag">'+b.family+'</span><span class="tag">'+b.habitat+'</span><div class="fact"><b>Key field mark:</b> '+clue+'</div><div class="fact"><b>Compare:</b> Use the scientific-name and habitat context, then compare the linked regional photos/recordings before making a difficult identification.</div><div class="actions"><a target="_blank" rel="noopener" href="'+links.image+'">📷 Commons photos</a><a target="_blank" rel="noopener" href="'+links.audio+'">🔊 Xeno-canto audio</a><a class="secondary" target="_blank" rel="noopener" href="'+links.macaulay+'">🎧 Macaulay / eBird</a></div></div>';
- loadImage(c,b); return c;
-}
-const groups=[...new Set(raw.map(x=>x.family))].sort(); for(const g of groups) group.insertAdjacentHTML("beforeend",'<option>'+g+'</option>');
+function esc(s){return String(s).replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));}
+const intro=[
+{title:"Welcome to Bengaluru’s birds",sub:"A visual field course • 222 species",body:"Learn to notice a few reliable clues at a time. You do not need to memorize technical terms or identify every bird instantly.",tips:["Look first; name it second.","Notice the whole shape before focusing on colour.","Use sound and habitat as supporting clues."]},
+{title:"A simple birdwatching routine",sub:"Pause • Observe • Compare",body:"Give a bird a few quiet moments. Watch how it moves, where it feeds, and which features remain visible as it turns.",tips:["Estimate size against a familiar bird.","Check bill shape, tail length and posture.","Avoid getting closer if the bird changes its behaviour."]},
+{title:"Start with shape and movement",sub:"Your quickest visual clues",body:"Silhouette often helps more than a fleeting colour. A long-legged wader, compact kingfisher and upright robin look different even at a distance.",tips:["Long legs often point toward waders.","A hovering bird over grass may be hunting.","Tail flicking, hopping and climbing can narrow the possibilities."]},
+{title:"Listen for patterns",sub:"Calls and songs",body:"You can learn a sound without knowing its technical name. Listen for rhythm, pitch, repetition and where the bird is calling from.",tips:["Compare several recordings, not just one.","Notice whether the sound is a short call or a longer song.","Use sound together with what you can see."]},
+{title:"Habitat is a clue, not a verdict",sub:"Gardens • scrub • woodland • wetlands",body:"Where a bird is found can make some identities more likely. Bengaluru’s parks, lakes, open scrub and wooded areas each host different communities.",tips:["Ask what the bird is doing in that habitat.","Remember that migrants and seasonal visitors change what you may see.","Confirm with appearance and sound; habitat alone is not proof."]},
+{title:"How to compare similar birds",sub:"Find one dependable difference",body:"When two birds look alike, compare them directly. Avoid trying to remember every detail at once.",tips:["Compare size and overall shape first.","Look for one clear mark: eyebrow, cheek, wing patch, bill or tail.","Then compare behaviour, habitat and calls."]}
+];
+const birds=raw;
+let slide=0;
+const total=intro.length+birds.length*2;
+function media(b){const q=encodeURIComponent(b.common+" "+b.scientific);return {photo:"https://commons.wikimedia.org/w/index.php?search="+q+"&title=Special:MediaSearch&type=image",audio:"https://www.xeno-canto.org/explore?query="+q,ml:"https://search.macaulaylibrary.org/catalog?searchField=species&view=grid"};}
+function current(){if(slide<intro.length)return {kind:"intro",data:intro[slide]};const n=Math.floor((slide-intro.length)/2),part=(slide-intro.length)%2;return {kind:"bird",data:birds[n],part};}
 function render(){
- const q=norm(document.querySelector("#q").value), g=document.querySelector("#group").value, h=document.querySelector("#habitat").value;
- const arr=raw.filter(b=>(!q||norm(b.common+" "+b.scientific+" "+b.family+" "+b.habitat+" "+(clues[b.common]||"")).includes(q))&&(!g||b.family===g)&&(!h||b.habitat===h));
- count.textContent=arr.length+" species shown • "+raw.length+" species in course";
- grid.innerHTML="";arr.forEach(b=>grid.appendChild(card(b)));
+ const s=current(), el=document.querySelector("#lesson");
+ document.querySelector("#progress").textContent=(slide+1)+" / "+total+" • "+(s.kind==="intro"?"Getting started":s.data.common);
+ document.querySelector("#prev").disabled=slide===0;document.querySelector("#next").textContent=slide===total-1?"Course complete":"Next →";
+ if(s.kind==="intro"){const d=s.data;el.innerHTML='<div class="slide intro"><div class="eyebrow">FIELD SKILLS</div><h2>'+esc(d.title)+'</h2><p class="subtitle">'+esc(d.sub)+'</p><p class="lead">'+esc(d.body)+'</p><h3>Remember</h3><ul>'+d.tips.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ul></div>';return;}
+ const b=s.data, links=media(b), clue=clues[b.common]||"Begin with its overall shape, main colours, bill and tail. Watch how it moves and where it feeds; compare a few regional examples before deciding.";
+ const first=s.part===0;
+ el.innerHTML='<div class="slide birdslide"><div class="eyebrow">BIRD '+b.id+' OF '+birds.length+' • SLIDE '+(s.part+1)+' OF 2</div><div class="birdlayout"><div class="visual"><div class="photo" id="photo"><span>Finding a photograph…</span></div><div class="mediabtn"><a target="_blank" rel="noopener" href="'+links.photo+'">More photos</a><a target="_blank" rel="noopener" href="'+links.audio+'">Listen to recordings</a></div><p class="smallnote">Media opens from Wikimedia Commons / Xeno-canto. Check the recording or photo page for the exact species, location and licence.</p></div><div class="lessontext"><h2>'+esc(b.common)+'</h2><p class="subtitle"><i>'+esc(b.scientific)+'</i> · '+esc(b.family)+'</p><span class="tag">'+esc(b.habitat)+'</span>'+(first?'<h3>Meet the bird</h3><p>'+esc(clue)+'</p><h3>What to notice</h3><ul><li>Overall size and body shape</li><li>Bill, tail and posture</li><li>Where it is feeding or resting</li></ul><h3>Sound</h3><p>Listen for its repeated call or song. Notice the rhythm and pitch, then compare more than one recording.</p>':'<h3>Recognize it in the field</h3><p>'+esc(clue)+'</p><h3>Food, behaviour and nesting</h3><p>Watch where it searches for food and how it moves. Many birds feed, nest and display differently across seasons; avoid assuming one behaviour applies to every individual or site.</p><h3>How to tell it apart</h3><ul><li>Compare its silhouette and most distinctive visible mark with similar birds.</li><li>Use habitat and behaviour as extra clues, not as the only evidence.</li><li>Check the sound and regional photos if the view was brief or distant.</li></ul>')+'</div></div></div>';
+ loadPhoto(b);
 }
-q.oninput=render;group.onchange=render;habitat.onchange=render;render();
-</script>
+async function loadPhoto(b){const holder=document.querySelector("#photo");if(!holder)return;const q=encodeURIComponent(b.common+" "+b.scientific);try{const url="https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="+q+"&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url&iiurlwidth=1100&format=json&origin=*";const j=await fetch(url).then(r=>r.json());const pages=Object.values(j.query?.pages||{});const p=pages.find(x=>x.imageinfo?.[0]?.thumburl||x.imageinfo?.[0]?.url);if(p&&document.querySelector("#photo")===holder){const im=document.createElement("img");im.alt=b.common+" photograph";im.src=p.imageinfo[0].thumburl||p.imageinfo[0].url;im.onerror=()=>holder.innerHTML="<span>Photo unavailable. Use More photos to browse.</span>";holder.innerHTML="";holder.appendChild(im);}else holder.innerHTML="<span>No image returned. Use More photos to browse.</span>";}catch(e){holder.innerHTML="<span>Image could not load. Use More photos to browse.</span>";}}
+document.querySelector("#prev").onclick=()=>{slide=Math.max(0,slide-1);render();};
+document.querySelector("#next").onclick=()=>{slide=Math.min(total-1,slide+1);render();};
+document.addEventListener("keydown",e=>{if(e.key==="ArrowRight")document.querySelector("#next").click();if(e.key==="ArrowLeft")document.querySelector("#prev").click();});
+render();</script>
 </body></html>
