@@ -475,8 +475,13 @@ function goToSlide(nextSlide){
 }
 function render(){
  const s=current(), el=document.querySelector("#lesson");
- document.querySelector("#progress").textContent=(slide+1)+" / "+total+" • "+(s.kind==="intro"?"Getting started":s.data.common);
- document.querySelector("#prev").disabled=slide===0;document.querySelector("#next").textContent=slide===total-1?"Course complete":"Next →";
+ if(s.kind==="intro"){
+  document.querySelector("#progress").textContent="Introduction "+(slide+1)+" of "+intro.length;
+ }else{
+  document.querySelector("#progress").textContent="Bird "+s.data.id+" of "+birds.length+" • Slide "+(s.part+1)+" of 2";
+ }
+ document.querySelector("#prev").disabled=slide===0;
+ document.querySelector("#next").textContent=slide===total-1?"Course complete":"Next →";
  if(s.kind==="intro"){const d=s.data;el.innerHTML='<div class="slide intro"><div class="eyebrow">FIELD SKILLS</div><h2>'+esc(d.title)+'</h2><p class="subtitle">'+esc(d.sub)+'</p><p class="lead">'+esc(d.body)+'</p><h3>Remember</h3><ul>'+d.tips.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ul></div>';return;}
  const b=s.data, links=media(b), clue=clues[b.common]||"Begin with its overall shape, main colours, bill and tail. Watch how it moves and where it feeds; compare a few regional examples before deciding.";
  const first=s.part===0;
