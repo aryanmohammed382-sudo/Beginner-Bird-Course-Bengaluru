@@ -580,6 +580,28 @@ let quizQuestions=[],quizSection="all",quizIndex=0,quizScore=0,quizAnswered=fals
 const quizSectionLabels={all:"All 2,500",field:"Field scenarios · 500",silhouette:"Silhouette + region · 1,000",photo:"Photo identifications · 1,000"};
 function ensureQuizBank(){if(!quizBankReady){quizQuestions=buildQuestionBank();quizBankReady=true;}return quizQuestions;}
 function activeQuizQuestions(){const bank=ensureQuizBank();return quizSection==="all"?bank:bank.filter(q=>q.type===quizSection);}
+function getBird(name){return birds.find(b=>b.common===name)||birds[0];}
+function silhouetteSVG(b){
+ const family=b.family||"bird";
+ const seed=(b.id||1)%7;
+ const tail=70+seed*7, body=150+seed*4, wing=75+seed*3;
+ return '<svg viewBox="0 0 520 260" role="img" aria-label="Silhouette practice image"><rect x="0" y="0" width="520" height="260" fill="#dfe6df"/><ellipse cx="250" cy="138" rx="'+body+'" ry="62" fill="#27332d"/><circle cx="390" cy="112" r="34" fill="#27332d"/><polygon points="420,112 478,96 478,128" fill="#27332d"/><polygon points="150,125 '+(80+wing)+' 70 210,145" fill="#27332d"/><polygon points="245,188 225,235 238,235 258,190" fill="#27332d"/><polygon points="280,188 300,235 313,235 294,185" fill="#27332d"/><polygon points="125,135 45,'+(130+tail)+' 155,150" fill="#27332d"/><text x="18" y="28" fill="#445248" font-size="16">'+esc(family)+" • backlit outline"+'</text></svg>';
+}
+async function loadQuizPhoto(b){
+ const holder=document.querySelector("#quizPhoto"); if(!holder)return;
+ try{
+  const wp="https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(b.scientific);
+  const j=await fetch(wp).then(r=>r.ok?r.json():null);
+  const img=j?.originalimage?.source||j?.thumbnail?.source;
+  if(img&&document.querySelector("#quizPhoto")===holder){
+   const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.src=img;
+   im.onerror=()=>{holder.innerHTML='<span>Photo unavailable. Use the species details and choices.</span>';};
+   holder.innerHTML="";holder.appendChild(im);return;
+  }
+  holder.innerHTML='<span>Photo unavailable. Use the species details and choices.</span>';
+ }catch(e){holder.innerHTML='<span>Photo could not load. Use the species details and choices.</span>';}
+}
+
 function uniqueChoices(answer,count=4,seed=0){
  const name=typeof answer==="string"?answer:answer.common,obj=getBird(name),pool=[],preferred=hardPairs.filter(p=>p.includes(name)).flat().filter(x=>x!==name);
  for(const x of preferred)if(!pool.includes(x)&&birds.some(b=>b.common===x))pool.push(x);
