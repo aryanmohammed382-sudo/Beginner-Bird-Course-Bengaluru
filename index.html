@@ -394,9 +394,17 @@ function photoQuestions(){
  for(let i=0;i<100;i++){const b=pool[(i*11+5)%pool.length];qs.push({type:"photo",answer:b.common,prompt:templates[i%templates.length],visual:b,explain:"Use at least two independent clues from the photograph. The distractors are chosen from birds that can occur in Bengaluru or nearby habitats, so a single colour patch should not be enough.",choices:uniqueChoices(b)});}
  return qs;
 }
-const quizQuestions=[...fieldQuestions(),...silhouetteQuestions(),...photoQuestions()];
-if(quizQuestions.length!==250) console.error("Quiz count error",quizQuestions.length);
-let quizIndex=0,quizScore=0,quizAnswered=false;
+let quizQuestions=[], quizIndex=0,quizScore=0,quizAnswered=false;
+function initQuiz(){
+ try{
+  quizQuestions=[...fieldQuestions(),...silhouetteQuestions(),...photoQuestions()];
+  if(quizQuestions.length!==250) throw new Error("Expected 250 questions");
+  return true;
+ }catch(e){
+  console.error(e);
+  return false;
+ }
+}
 function quizTypeLabel(q){return q.type==="field"?"50 REAL-LIFE FIELD SCENARIOS":q.type==="silhouette"?"100 SILHOUETTE + REGION":"100 PHOTO IDENTIFICATIONS";}
 function renderQuiz(){
  const q=quizQuestions[quizIndex], card=document.querySelector("#quizCard");
@@ -425,11 +433,11 @@ function answerQuiz(i){
 }
 function finishQuiz(){
  const pct=Math.round(quizScore/250*100);
- document.querySelector("#quizCard").innerHTML='<div class="quizMeta"><span class="quizType">ASSESSMENT COMPLETE</span></div><p class="quizScore">'+quizScore+' / 250 ('+pct+'%)</p><p>You completed all 250 questions. A strong score should come from distinguishing close regional alternatives, not memorising obvious colour labels.</p><div class="quizActions"><button id="retryQuiz">Restart 250</button><button id="backCourse">Back to course</button></div>';
+ document.querySelector("#quizCard").innerHTML='<div class="quizMeta"><span class="quizType">ASSESSMENT COMPLETE</span></div><p class="quizScore">'+quizScore+' / 250 ('+pct+'%)</p><p>You completed all 250 questions. A strong score should come from distinguishing close regional alternatives, not memorising obvious colour labels.</p><div class="quizActions"><button id="retryQuiz">Restart Practice Questions</button><button id="backCourse">Back to course</button></div>';
  document.querySelector("#retryQuiz").onclick=()=>{quizIndex=0;quizScore=0;renderQuiz();};
  document.querySelector("#backCourse").onclick=()=>{document.querySelector("#practice").classList.add("quizHidden");document.querySelector("#lesson").scrollIntoView({behavior:"smooth"});};
 }
-function startQuiz(){document.querySelector("#practice").classList.remove("quizHidden");renderQuiz();document.querySelector("#practice").scrollIntoView({behavior:"smooth"});}
+function startQuiz(){if(!initQuiz())return;document.querySelector("#practice").classList.remove("quizHidden");renderQuiz();document.querySelector("#practice").scrollIntoView({behavior:"smooth"});}
 document.querySelector("#practiceBtn").onclick=startQuiz;
 
 document.querySelector("#prev").onclick=()=>{slide=Math.max(0,slide-1);render();};
