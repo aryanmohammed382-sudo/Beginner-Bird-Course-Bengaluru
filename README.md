@@ -3,7 +3,7 @@
 A browser-based, GitHub Pages-friendly field course for learning Bengaluru birds by appearance, habitat and sound.
 
 ## Included
-- **200 species** with common name, scientific name, family and Bengaluru-relevant habitat category.
+- **222 species** with common name, scientific name, family and Bengaluru-relevant habitat category.
 - Search and family/habitat filters.
 - Identification clues for key beginner species and a general comparison workflow for the expanded list.
 - **Live Wikimedia Commons photography** selected in the browser using the common + scientific name.
