@@ -503,7 +503,7 @@ async function commonsPhoto(b,holder){try{const q=encodeURIComponent('"'+b.scien
 
 
 // ---------- 2,500-question field assessment ----------
-const QUIZ_TOTAL=2500,QUIZ_COUNTS={field:500,silhouette:1000,photo:1000};
+const QUIZ_TOTAL=2500,QUIZ_COUNTS={field:1000,silhouette:0,photo:1500};
 const quizPlaces={
 "Urban & gardens":["apartment compound","city park garden","tree-lined residential road","school or university campus","quiet garden beside a busy road","large institutional grounds"],
 "Woodland":["wooded park edge","shaded grove","scrubby woodland trail","streamside vegetation","mature tree canopy","woodland clearing"],
@@ -544,7 +544,7 @@ function buildAnswerSequence(){
  return seq;
 }
 const answerSequence=buildAnswerSequence();
-const quizTypes=answerSequence.map((_,i)=>i<500?"field":i<1500?"silhouette":"photo");
+const quizTypes=answerSequence.map((_,i)=>i<1000?"field":"photo");
 function oneProminentFeature(b){
  const clue=clues[b.common]||"";
  let feature=(clue.split(/[;,]/)[0]||"").trim();
@@ -575,22 +575,7 @@ function questionScenario(b,i,type){
   ];
   return (ease?guided:standard)[v%(ease?guided.length:standard.length)];
  }
- if(type==="silhouette"){
   const guided=[
-   "You see a bird in outline at a "+place+". One helpful feature is "+feature+". Which species is it?",
-   "A partly backlit bird at a "+place+" has a clear outline. Notice "+feature+". Which species fits best?",
-   "At a "+place+", you cannot see every detail, but you notice "+feature+". Which bird is the best match?"
-  ];
-  const standard=[
-   "A bird is partly backlit at a "+place+". You can judge its overall body shape, bill and tail. Which species is the best match?",
-   "At a "+place+", a distant bird is mostly an outline. Use its overall proportions and posture to choose the species.",
-   "A bird crosses the view at a "+place+". Fine plumage is difficult to see, but its general shape is clear. Which species fits best?",
-   "You see a bird as a silhouette at a "+place+". Focus on its overall size, body shape and tail rather than tiny details. Which species is it?",
-   "A distant bird at a "+place+" gives you a useful view of its outline and posture. Which species is the most likely?"
-  ];
-  return (ease?guided:standard)[v%(ease?guided.length:standard.length)];
- }
- const guided=[
   "Look at the bird photograph. It was seen at a "+place+". One helpful feature is "+feature+". Which species is shown?",
   "Study the photograph from a "+place+" observation. Notice "+feature+". Which species is it?",
   "Identify the bird in the photograph. A useful feature to notice is "+feature+". Which species is shown?"
@@ -615,7 +600,7 @@ function buildQuestionBank(){
  });
 }
 let quizQuestions=[],quizSection="all",quizIndex=0,quizScore=0,quizAnswered=false,quizBankReady=false;
-const quizSectionLabels={all:"All 2,500",field:"Field scenarios · 500",silhouette:"Silhouette + region · 1,000",photo:"Photo identifications · 1,000"};
+const quizSectionLabels={all:"All 2,500",field:"Field scenarios · 1,000",photo:"Photo identifications · 1,500"};
 function ensureQuizBank(){if(!quizBankReady){quizQuestions=buildQuestionBank();quizBankReady=true;}return quizQuestions;}
 function activeQuizQuestions(){const bank=ensureQuizBank();return quizSection==="all"?bank:bank.filter(q=>q.type===quizSection);}
 function getBird(name){return birds.find(b=>b.common===name)||birds[0];}
