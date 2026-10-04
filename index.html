@@ -545,9 +545,24 @@ function buildAnswerSequence(){
 }
 const answerSequence=buildAnswerSequence();
 const quizTypes=answerSequence.map((_,i)=>i<500?"field":i<1500?"silhouette":"photo");
+function beginnerClue(b){
+ const clue=clues[b.common]||"";
+ const sentences=clue.split(/[.!?]+/).map(s=>s.trim()).filter(Boolean);
+ const colour=/\b(black|white|grey|gray|brown|green|blue|red|yellow|orange|pink|purple|rufous|chestnut|golden|dark|pale|bright|olive|buff|cream|rose|silver)\b/i;
+ const colourSentence=sentences.find(s=>colour.test(s));
+ if(colourSentence)return colourSentence+".";
+ return sentences[0]?sentences[0]+".":"Look for the most obvious combination of shape, pattern and behaviour.";
+}
 function questionScenario(b,i,type){
  const place=(quizPlaces[b.habitat]||quizPlaces.Woodland)[i%6],time=quizTimes[Math.floor(i/6)%quizTimes.length],mode=quizModes[Math.floor(i/48)%quizModes.length],sound=quizSound(b),v=i%12;
+ const easier=i%10<3;
+ const colourClue=beginnerClue(b);
  if(type==="field"){
+  if(easier)return [
+   "At a "+place+" in Bengaluru, you see a bird "+mode+". One useful clue is: "+colourClue+" What species is it?",
+   "You are birding at a "+place+". The bird is "+mode+" and you notice this clue: "+colourClue+" Which species best fits?",
+   "A bird appears at a "+place+". Start with its shape and this helpful clue: "+colourClue+" Which species is the best match?"
+  ][v%3];
   const a=[
    "At a "+place+" in Bengaluru, at "+time+", you see a bird "+mode+". You note its "+(b.family==="Ardeidae"?"bill and leg proportions":b.family==="Accipitridae"||b.family==="Falconidae"?"wing shape and tail":b.family==="Muscicapidae"?"posture and perch-to-ground movement":"body shape and tail")+". A nearby recording is described as "+sound+". Which species is the best-supported identification?",
    "A birder records a short encounter at a "+place+". The bird is "+mode+", and the view is brief enough that colour is partly unreliable. The field notes emphasize structure, behaviour and the setting. A recording later captures "+sound+". Which candidate should be identified?",
@@ -558,6 +573,11 @@ function questionScenario(b,i,type){
   ]; return a[v%a.length];
  }
  if(type==="silhouette"){
+  if(easier)return [
+   "You see a bird in outline at a "+place+". Notice its body shape and this helpful clue: "+colourClue+" Which species is it?",
+   "At a "+place+", a bird is partly backlit. You can still see its size and shape, plus this clue: "+colourClue+" Which species fits best?",
+   "A distant bird at a "+place+" is hard to see. Use its outline and this clue: "+colourClue+" Which bird is the best match?"
+  ][v%3];
   const a=[
    "From a backlit silhouette at a "+place+", you can judge only body depth, bill projection, tail and leg length. The bird is "+mode+". Which species is the strongest structural match?",
    "A distant bird at a "+place+" is reduced to an outline. The observer notes a "+(b.family==="Ardeidae"?"long-legged, long-necked":"compact, medium-bodied")+" shape and a "+mode+" posture. Which species should be compared first?",
@@ -567,17 +587,29 @@ function questionScenario(b,i,type){
    "The photograph is intentionally treated as a silhouette at a "+place+". You can use posture, proportions and movement, but not fine plumage. Which species is the best match?"
   ]; return a[v%a.length];
  }
+ if(easier)return [
+   "Look at the bird photograph. It was seen at a "+place+". Notice this helpful clue: "+colourClue+" Which species is shown?",
+   "Identify the bird in the photograph. Start with its shape, then use this clue: "+colourClue+" Which species is it?",
+   "Study the photograph. The bird was "+mode+" at a "+place+". One useful clue is: "+colourClue+" Which species is shown?"
+ ][v%3];
  const a=[
-  "Study the taxon photograph carefully. The encounter is framed as a "+time+" observation at a "+place+". Which species is shown? Defend the identification with at least two visible features rather than colour alone.",
-  "This photograph comes from a "+place+" scenario. Which species is shown? Look first at structure and pattern, then use the habitat context as supporting evidence.",
-  "Identify the bird in the photograph. The bird is shown "+mode+" at a "+place+"; which visible combination of shape, plumage pattern and posture supports the identification?",
-  "Use the photograph as the primary evidence. The observation occurred at a "+place+" and the bird was "+mode+". Which species is the best match, and what feature would you use to reject the closest distractor?",
-  "A field photographer captured this bird during a "+time+" visit to a "+place+". Which species is shown? Do not let a generic colour resemblance outweigh structure and pattern.",
-  "The image is paired with a sound note for context: "+sound+". Use the photograph to make the identification, then use the sound only as supporting evidence. Which species is shown?"
+   "Study the taxon photograph carefully. The encounter is framed as a "+time+" observation at a "+place+". Which species is shown? Defend the identification with at least two visible features rather than colour alone.",
+   "This photograph comes from a "+place+" scenario. Which species is shown? Look first at structure and pattern, then use the habitat context as supporting evidence.",
+   "Identify the bird in the photograph. The bird is shown "+mode+" at a "+place+"; which visible combination of shape, plumage pattern and posture supports the identification?",
+   "Use the photograph as the primary evidence. The observation occurred at a "+place+" and the bird was "+mode+". Which species is the best match, and what feature would you use to reject the closest distractor?",
+   "A field photographer captured this bird during a "+time+" visit to a "+place+". Which species is shown? Do not let a generic colour resemblance outweigh structure and pattern.",
+   "The image is paired with a sound note for context: "+sound+". Use the photograph to make the identification, then use the sound only as supporting evidence. Which species is shown?"
  ]; return a[v%a.length];
 }
 function buildQuestionBank(){
- return answerSequence.map((b,i)=>({id:"q"+(i+1),type:quizTypes[i],answer:b.common,visual:b,prompt:questionScenario(b,i,quizTypes[i]),decisive:quizDecisive(b),hint:quizTypes[i]==="photo"?"Start with silhouette and pattern before using colour or habitat; compare the closest two options directly.":quizTypes[i]==="silhouette"?"Compare bill projection, body depth, tail shape, leg length and posture before using habitat.":"Use at least two independent clues. Sound and habitat should support a visible structural or plumage clue, not replace it."}));
+ return answerSequence.map((b,i)=>{
+  const easier=i%10<3;
+  return {id:"q"+(i+1),type:quizTypes[i],answer:b.common,visual:b,prompt:questionScenario(b,i,quizTypes[i]),decisive:quizDecisive(b),easy:easier,
+   hint:easier
+    ? (quizTypes[i]==="photo"?"Start with the bird's overall shape and the helpful colour clue in the question, then choose the closest-looking option.":quizTypes[i]==="silhouette"?"Use the outline first, then use the colour clue provided in the question.":"Use the helpful colour clue first, then confirm it with the bird's shape or behaviour.")
+    : (quizTypes[i]==="photo"?"Start with silhouette and pattern before using colour or habitat; compare the closest two options directly.":quizTypes[i]==="silhouette"?"Compare bill projection, body depth, tail shape, leg length and posture before using habitat.":"Use at least two independent clues. Sound and habitat should support a visible structural or plumage clue, not replace it.")
+  };
+ });
 }
 let quizQuestions=[],quizSection="all",quizIndex=0,quizScore=0,quizAnswered=false,quizBankReady=false;
 const quizSectionLabels={all:"All 2,500",field:"Field scenarios · 500",silhouette:"Silhouette + region · 1,000",photo:"Photo identifications · 1,000"};
@@ -605,8 +637,9 @@ async function loadQuizPhoto(b){
  }catch(e){holder.innerHTML='<span>Photo could not load. Use the species details and choices.</span>';}
 }
 
-function uniqueChoices(answer,count=4,seed=0){
- const name=typeof answer==="string"?answer:answer.common,obj=getBird(name),pool=[],preferred=hardPairs.filter(p=>p.includes(name)).flat().filter(x=>x!==name);
+function uniqueChoices(answer,count=4,seed=0,easier=false){
+ const name=typeof answer==="string"?answer:answer.common,obj=getBird(name),pool=[];
+ const preferred=easier?[]:hardPairs.filter(p=>p.includes(name)).flat().filter(x=>x!==name);
  for(const x of preferred)if(!pool.includes(x)&&birds.some(b=>b.common===x))pool.push(x);
  const nearby=birds.filter(b=>b.common!==name&&(b.family===obj.family||b.habitat===obj.habitat));
  for(const b of deterministicOrder(nearby,seed+13))if(!pool.includes(b.common))pool.push(b.common);
@@ -620,7 +653,7 @@ function renderQuiz(){
  const qs=activeQuizQuestions();if(quizIndex>=qs.length)quizIndex=0;
  const q=qs[quizIndex],card=document.querySelector("#quizCard");quizAnswered=false;
  const globalNumber=quizQuestions.indexOf(q)+1;
- card.innerHTML=renderSectionTabs()+'<div class="quizMeta"><span class="quizType">'+(q.type==="field"?"FIELD SCENARIO":q.type==="silhouette"?"SILHOUETTE + REGION":"PHOTO IDENTIFICATION")+'</span><span>Question '+(quizIndex+1)+' of '+qs.length+'</span><span>Bank position '+globalNumber+' / '+QUIZ_TOTAL+'</span><span>Score '+quizScore+'</span></div><div class="quizPrompt">'+esc(q.prompt)+'</div>'+(q.type==="silhouette"?'<div class="quizVisual">'+silhouetteSVG(q.visual)+'</div>':q.type==="photo"?'<div class="quizVisual" id="quizPhoto"><span>Loading the exact taxon image…</span></div>':"")+'<div class="hintBox"><button id="showHint" class="hintBtn">Show hint</button><span id="hintText" class="quizHidden">'+esc(q.hint)+'</span></div><div class="choices">'+uniqueChoices(q.answer,4,globalNumber).map((x,i)=>'<button class="choice" data-i="'+i+'">'+esc(x)+'</button>').join("")+'</div><div id="quizExplain"></div><div class="quizActions"><button id="nextQ" class="secondary" disabled>'+(quizIndex===qs.length-1?"Finish section":"Next question →")+'</button><button id="quitQ" class="secondary">Back to course</button></div>';
+ card.innerHTML=renderSectionTabs()+'<div class="quizMeta"><span class="quizType">'+(q.type==="field"?"FIELD SCENARIO":q.type==="silhouette"?"SILHOUETTE + REGION":"PHOTO IDENTIFICATION")+'</span><span>Question '+(quizIndex+1)+' of '+qs.length+'</span><span>Bank position '+globalNumber+' / '+QUIZ_TOTAL+'</span><span>Score '+quizScore+'</span></div><div class="quizPrompt">'+esc(q.prompt)+'</div>'+(q.type==="silhouette"?'<div class="quizVisual">'+silhouetteSVG(q.visual)+'</div>':q.type==="photo"?'<div class="quizVisual" id="quizPhoto"><span>Loading the exact taxon image…</span></div>':"")+'<div class="hintBox"><button id="showHint" class="hintBtn">Show hint</button><span id="hintText" class="quizHidden">'+esc(q.hint)+'</span></div><div class="choices">'+uniqueChoices(q.answer,4,globalNumber,q.easy).map((x,i)=>'<button class="choice" data-i="'+i+'">'+esc(x)+'</button>').join("")+'</div><div id="quizExplain"></div><div class="quizActions"><button id="nextQ" class="secondary" disabled>'+(quizIndex===qs.length-1?"Finish section":"Next question →")+'</button><button id="quitQ" class="secondary">Back to course</button></div>';
  document.querySelectorAll(".choice").forEach(btn=>btn.onclick=()=>answerQuiz(Number(btn.dataset.i)));
  document.querySelector("#showHint").onclick=()=>{document.querySelector("#hintText").classList.remove("quizHidden");document.querySelector("#showHint").disabled=true;};
  if(q.type==="photo")loadQuizPhoto(q.visual);
