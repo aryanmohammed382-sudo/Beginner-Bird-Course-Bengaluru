@@ -553,45 +553,66 @@ function oneProminentFeature(b){
  return feature||"its overall shape";
 }
 function questionScenario(b,i,type){
- const place=(quizPlaces[b.habitat]||quizPlaces.Woodland)[i%6],time=quizTimes[Math.floor(i/6)%quizTimes.length],mode=quizModes[Math.floor(i/48)%quizModes.length],sound=quizSound(b),v=i%12;
- const ease=i%10<4;
- const feature=oneProminentFeature(b);
+ const place=(quizPlaces[b.habitat]||quizPlaces.Woodland)[i%6],
+       time=quizTimes[Math.floor(i/6)%quizTimes.length],
+       mode=quizModes[Math.floor(i/48)%quizModes.length],
+       sound=quizSound(b),v=i%12,
+       ease=i%10<4,
+       feature=oneProminentFeature(b);
+
  if(type==="field"){
-  const a=[
-   "At a "+place+" in Bengaluru, at "+time+", you see a bird "+mode+". You note its "+(b.family==="Ardeidae"?"bill and leg proportions":b.family==="Accipitridae"||b.family==="Falconidae"?"wing shape and tail":b.family==="Muscicapidae"?"posture and perch-to-ground movement":"body shape and tail")+". A nearby recording is described as "+sound+". Which species is the best-supported identification?",
-   "A birder records a short encounter at a "+place+". The bird is "+mode+", and the view is brief enough that colour is partly unreliable. The field notes emphasize structure, behaviour and the setting. A recording later captures "+sound+". Which candidate should be identified?",
-   "During a "+time+" walk at a "+place+", a bird appears for several seconds. You compare size, silhouette, visible plumage pattern and behaviour before checking sound. The sound note is: "+sound+". Which species best fits the complete set of evidence?",
-   "At a "+place+", similar-looking birds have caused confusion before. This individual is "+mode+"; habitat is only supporting evidence. You also hear "+sound+". Which species is the strongest match?",
-   "Your field notebook says: "+time+"; "+place+"; bird "+mode+"; brief view; sound described as "+sound+". Which identification is most defensible after combining independent clues rather than choosing from habitat alone?",
-   "A beginner suggests a familiar species after seeing a bird at a "+place+". You slow down and compare shape, plumage pattern, behaviour and the recording, which contains "+sound+". Which species best survives that comparison?"
+  const guided=[
+   "At a "+place+" in Bengaluru, you see a bird "+mode+". One helpful feature is "+feature+". Which species is it?",
+   "During a "+time+" walk at a "+place+", a bird appears briefly. You notice "+feature+". Which species best fits?",
+   "You are birding at a "+place+". The bird is "+mode+" and you notice "+feature+". Which species would you record?"
   ];
-  let q=a[v%a.length];
-  return ease?q+" One helpful feature is "+feature+".":q;
+  const standard=[
+   "At a "+place+" in Bengaluru, you see a bird "+mode+". You have a clear view of its general shape and behaviour. Which species is the best match?",
+   "During a "+time+" walk at a "+place+", a bird appears briefly. You can use its appearance and the way it is behaving. Which species best fits?",
+   "At a "+place+", you see a bird "+mode+". The habitat gives you context, but the bird's appearance should lead the identification. Which species is it?",
+   "A bird is feeding or resting at a "+place+". You get a reasonable view and can judge its size, shape and general pattern. Which species is the best match?",
+   "You are new to birding and see a bird at a "+place+". The view is good enough to judge its overall appearance and behaviour. Which species would you choose?"
+  ];
+  return (ease?guided:standard)[v%(ease?guided.length:standard.length)];
  }
  if(type==="silhouette"){
-  const a=[
-   "From a backlit silhouette at a "+place+", you can judge only body depth, bill projection, tail and leg length. The bird is "+mode+". Which species is the strongest structural match?",
-   "A distant bird at a "+place+" is reduced to an outline. The observer notes a "+(b.family==="Ardeidae"?"long-legged, long-necked":"compact, medium-bodied")+" shape and a "+mode+" posture. Which species should be compared first?",
-   "Heat haze removes most plumage detail at a "+place+". You can still see the bird's proportions and movement while it is "+mode+". Which identification is most consistent with the silhouette?",
-   "Only the outline survives in this observation at a "+place+". Ignore colour and use bill, tail, body and leg proportions plus behaviour. Which bird best fits?",
-   "A bird crosses the sky or vegetation at a "+place+". Its silhouette is clear for a moment while it is "+mode+". Which candidate fits the structure without depending on a single colour patch?",
-   "The photograph is intentionally treated as a silhouette at a "+place+". You can use posture, proportions and movement, but not fine plumage. Which species is the best match?"
+  const guided=[
+   "You see a bird in outline at a "+place+". One helpful feature is "+feature+". Which species is it?",
+   "A partly backlit bird at a "+place+" has a clear outline. Notice "+feature+". Which species fits best?",
+   "At a "+place+", you cannot see every detail, but you notice "+feature+". Which bird is the best match?"
   ];
-  return ease?a[v%a.length]+" One helpful feature to remember is "+feature+".":a[v%a.length];
+  const standard=[
+   "A bird is partly backlit at a "+place+". You can judge its overall body shape, bill and tail. Which species is the best match?",
+   "At a "+place+", a distant bird is mostly an outline. Use its overall proportions and posture to choose the species.",
+   "A bird crosses the view at a "+place+". Fine plumage is difficult to see, but its general shape is clear. Which species fits best?",
+   "You see a bird as a silhouette at a "+place+". Focus on its overall size, body shape and tail rather than tiny details. Which species is it?",
+   "A distant bird at a "+place+" gives you a useful view of its outline and posture. Which species is the most likely?"
+  ];
+  return (ease?guided:standard)[v%(ease?guided.length:standard.length)];
  }
- const a=[
-  "Study the taxon photograph carefully. The encounter is framed as a "+time+" observation at a "+place+". Which species is shown? Defend the identification with at least two visible features rather than colour alone.",
-  "This photograph comes from a "+place+" scenario. Which species is shown? Look first at structure and pattern, then use the habitat context as supporting evidence.",
-  "Identify the bird in the photograph. The bird is shown "+mode+" at a "+place+"; which visible combination of shape, plumage pattern and posture supports the identification?",
-  "Use the photograph as the primary evidence. The observation occurred at a "+place+" and the bird was "+mode+". Which species is the best match, and what feature would you use to reject the closest distractor?",
-  "A field photographer captured this bird during a "+time+" visit to a "+place+". Which species is shown? Do not let a generic colour resemblance outweigh structure and pattern.",
-  "The image is paired with a sound note for context: "+sound+". Use the photograph to make the identification, then use the sound only as supporting evidence. Which species is shown?"
+ const guided=[
+  "Look at the bird photograph. It was seen at a "+place+". One helpful feature is "+feature+". Which species is shown?",
+  "Study the photograph from a "+place+" observation. Notice "+feature+". Which species is it?",
+  "Identify the bird in the photograph. A useful feature to notice is "+feature+". Which species is shown?"
  ];
- let q=a[v%a.length];
- return ease?q+" One helpful feature to notice is "+feature+".":q;
+ const standard=[
+  "Study the bird photograph from a "+place+" observation. Start with its overall shape and plumage pattern. Which species is shown?",
+  "Look carefully at the photograph. The bird was seen at a "+place+". Use its appearance first and the habitat as supporting information. Which species is it?",
+  "Identify the bird in the photograph. Focus on its overall shape, main pattern and posture rather than tiny details. Which species is shown?",
+  "A field photographer captured this bird at a "+place+". Which species is shown? Start with the most obvious field mark and then check the rest of the bird.",
+  "Study the photograph from a "+time+" observation at a "+place+". Which species is shown? Use the bird's appearance as your main evidence."
+ ];
+ return (ease?guided:standard)[v%(ease?guided.length:standard.length)];
 }
 function buildQuestionBank(){
- return answerSequence.map((b,i)=>({id:"q"+(i+1),type:quizTypes[i],answer:b.common,visual:b,prompt:questionScenario(b,i,quizTypes[i]),decisive:quizDecisive(b),hint:quizTypes[i]==="photo"?"Start with silhouette and pattern before using colour or habitat; compare the closest two options directly.":quizTypes[i]==="silhouette"?"Compare bill projection, body depth, tail shape, leg length and posture before using habitat.":"Use at least two independent clues. Sound and habitat should support a visible structural or plumage clue, not replace it."}));
+ return answerSequence.map((b,i)=>{
+  const ease=i%10<4;
+  return {id:"q"+(i+1),type:quizTypes[i],answer:b.common,visual:b,prompt:questionScenario(b,i,quizTypes[i]),decisive:quizDecisive(b),level:ease?"guided":"beginner",
+   hint:ease
+    ? (quizTypes[i]==="photo"?"Use the helpful feature in the question, then check the bird's overall shape.":quizTypes[i]==="silhouette"?"Use the helpful feature first, then compare the outline.":"Start with the helpful feature, then confirm it with the bird's overall appearance.")
+    : (quizTypes[i]==="photo"?"Start with the bird's overall shape and main plumage pattern. You do not need to identify every detail.":quizTypes[i]==="silhouette"?"Use the overall outline, body shape and tail. Ignore tiny details that are hard to see.":"Start with the bird's overall appearance and behaviour. Use habitat as supporting evidence rather than trying to combine every clue.")
+  };
+ });
 }
 let quizQuestions=[],quizSection="all",quizIndex=0,quizScore=0,quizAnswered=false,quizBankReady=false;
 const quizSectionLabels={all:"All 2,500",field:"Field scenarios · 500",silhouette:"Silhouette + region · 1,000",photo:"Photo identifications · 1,000"};
