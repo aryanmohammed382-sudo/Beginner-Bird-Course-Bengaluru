@@ -306,10 +306,7 @@ const intro=[
 {title:"Habitat is a clue, not a verdict",sub:"Gardens • scrub • woodland • wetlands",body:"Where a bird is found can make some identities more likely. Bengaluru’s parks, lakes, open scrub and wooded areas each host different communities.",tips:["Ask what the bird is doing in that habitat.","Remember that migrants and seasonal visitors change what you may see.","Confirm with appearance and sound; habitat alone is not proof."]},
 {title:"How to compare similar birds",sub:"Find one dependable difference",body:"When two birds look alike, compare them directly. Avoid trying to remember every detail at once.",tips:["Compare size and overall shape first.","Look for one clear mark: eyebrow, cheek, wing patch, bill or tail.","Then compare behaviour, habitat and calls."]}
 ];
-const birds=raw.trim().split(/\n+/).map((line,index)=>{
- const [common,scientific,family,habitat]=line.trim().split("|").map(x=>x.trim());
- return {id:index+1,common,scientific,family,habitat};
-}).filter(b=>b.common&&b.scientific&&b.family&&b.habitat);
+const birds=raw;
 let slide=0;
 const total=intro.length+birds.length*2;
 function media(b){const q=encodeURIComponent(b.common+" "+b.scientific),audioQ=encodeURIComponent(b.common);return {photo:"https://commons.wikimedia.org/w/index.php?search="+q+"&title=Special:MediaSearch&type=image",audio:"https://www.xeno-canto.org/explore?query="+audioQ,ml:"https://search.macaulaylibrary.org/catalog?searchField=species&view=grid"};}
