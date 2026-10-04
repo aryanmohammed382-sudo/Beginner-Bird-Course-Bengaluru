@@ -303,6 +303,74 @@ const birds=raw;
 let slide=0;
 const total=intro.length+birds.length*2;
 function media(b){const q=encodeURIComponent(b.common+" "+b.scientific),audioQ=encodeURIComponent(b.common);return {photo:"https://commons.wikimedia.org/w/index.php?search="+q+"&title=Special:MediaSearch&type=image",audio:"https://www.xeno-canto.org/explore?query="+audioQ,ml:"https://search.macaulaylibrary.org/catalog?searchField=species&view=grid"};}
+function fieldAdvice(b){
+ const hard=hardPairs.find(p=>p.includes(b.common))?.filter(x=>x!==b.common)||[];
+ const base=clues[b.common];
+ const family=b.family, h=b.habitat;
+ const visual=base||({
+  "Ardeidae":"Look for the exact bill colour, leg colour, neck length and whether the bird looks compact or very tall; check the wings in flight for strong contrast.",
+  "Accipitridae":"Watch the wing shape, tail shape and head profile first; then look for the strongest pale/dark contrast on the underparts or wings.",
+  "Muscicapidae":"Focus on the face, throat, wing bars, tail pattern and the way the bird launches from a perch and returns.",
+  "Sturnidae":"Check the head colour, bill colour, eye skin and wing pattern; several mynas and starlings look similar at a distance.",
+  "Alcedinidae":"Look for bill size and colour, head pattern and the contrast between the upperparts and underparts before relying on the blue colour.",
+  "Scolopacidae":"Check leg colour, bill length and shape, back pattern and the amount of white at the shoulder; watch how it walks and feeds at the water edge.",
+  "Charadriidae":"Look carefully at the face pattern, breast band, leg colour and any wattle or forehead colour.",
+  "Anatidae":"Check the bill shape and pattern, head colour, flank pattern and size; compare the bird with other ducks on the same waterbody.",
+  "Strigidae":"Look for eye colour, facial pattern, ear tufts if present, streaking and the bird's preferred roosting position.",
+  "Psittaculidae":"Check tail length and shape, head colour and any neck collar; listen for the flight call while watching the flock.",
+  "Columbidae":"Look for the neck pattern, wing markings, tail pattern and overall body colour; note whether it walks, feeds on the ground or sits in fruiting trees.",
+  "Alaudidae":"Focus on the crown, breast streaking, wing pattern and tail; watch whether it walks, runs or sings from an exposed perch.",
+  "Motacillidae":"Check the streaking, eyebrow, back colour and tail length; watch the bird's walking or tail-bobbing style on open ground."
+ }[family]||("Start with the "+(h||"local")+" setting, then look closely at the face, bill, wings and tail. The most useful clue is the particular combination rather than one colour alone."));
+ const micro={
+  "Urban & gardens":"around lawns, paths, hedges and mature garden trees",
+  "Woodland":"inside shaded foliage, along woodland edges and in dense understory",
+  "Grassland & scrub":"low grass, scrub patches and the edges of open ground",
+  "Wetlands":"along shallow water, muddy margins, reeds or floating vegetation",
+  "Open country":"short grass, bare ground, field edges and scattered bushes",
+  "Seasonal migrant":"open water, fields, scrub and other suitable wintering habitat"
+ }[h]||"the vegetation and ground around it";
+ const feeding={
+  "Ardeidae":"Watch it stalk slowly through shallow water or wet grass; note whether it strikes prey with a straight bill thrust and whether it hunts alone or in loose groups.",
+  "Accipitridae":"Watch from a high perch or while soaring. Note whether it scans from above, hovers, stoops or makes a short burst through trees before identifying it.",
+  "Falconidae":"Watch for a powerful, direct flight and sudden acceleration. Perches on exposed structures can give a useful view of the head and pointed wings.",
+  "Muscicapidae":"Look for repeated perch-to-perch movements and short sallies after insects. Dense foliage can hide the bird, so listen first and scan the perch where the call came from.",
+  "Sturnidae":"Check lawns, fruiting trees and open ground for active feeding. Watch the bill and eye area while it walks or probes rather than judging it from a dark silhouette.",
+  "Alcedinidae":"Search quiet water edges, overhanging branches and low perches. A plunge or short dart toward water is a useful behaviour clue; bank-nesting species may also stay close to exposed soil.",
+  "Scolopacidae":"Search the shallow edge and mud rather than deep water. Note whether it probes, pecks, wades or bobs its rear while feeding.",
+  "Charadriidae":"Scan open muddy or grassy margins. Watch whether it runs, stops and pecks, and look for its facial pattern when it pauses.",
+  "Anatidae":"Scan open water and vegetation edges. Compare how much time it spends dabbling, diving or grazing, then check the bill and head pattern.",
+  "Strigidae":"Look into shaded trees, cavities and dense foliage during the day; at dusk, listen from the same area and watch for short hunting flights.",
+  "Psittaculidae":"Look high in flowering or fruiting trees and listen for the flock before searching. Tail length and the head/neck pattern are often easiest to judge when perched.",
+  "Columbidae":"Search fruiting trees, woodland edges and open ground depending on the species. Watch the feeding style and note whether the bird feeds alone, in pairs or in groups.",
+  "Alaudidae":"Scan open ground first, then exposed rocks, bushes and wires. Singing or display flights can reveal a bird that is otherwise difficult to spot.",
+  "Motacillidae":"Look along open ground and wet margins for a bird walking and feeding between pauses. Tail movement, posture and streaking can be more useful than a quick colour impression."
+ }[family]||("Watch it "+(h==="Wetlands"?"along the water edge":h==="Woodland"?"inside or along the edge of dense vegetation":"on the ground, low vegetation or exposed perches")+"; note exactly how it searches for food and where it chooses to perch."));
+ const nesting={
+  "Ardeidae":"For breeding behaviour, watch for repeated visits to trees, reedbeds or wetland vegetation; avoid disturbing colonies.",
+  "Accipitridae":"Breeding birds often return to a high, concealed nest site. Watch from a distance for repeated carrying of sticks or prey rather than approaching the nest.",
+  "Falconidae":"Look for repeated use of tall buildings, cliffs or other high structures while keeping well away from any nest or fledgling.",
+  "Muscicapidae":"Small insectivores often use dense vegetation, cavities or sheltered ledges. Repeated food-carrying trips are a better clue than trying to locate the nest itself.",
+  "Sturnidae":"Look for cavity or tree-associated breeding behaviour and repeated visits to the same hole or sheltered site, but do not approach the nest.",
+  "Alcedinidae":"Some species use cavities or banks near water. Repeated visits to the same bank or hole can reveal breeding activity from a safe distance.",
+  "Scolopacidae":"Migratory waders seen around Bengaluru are usually being observed away from their breeding grounds; focus on identification and wintering behaviour rather than searching for nests.",
+  "Charadriidae":"Open-ground breeding behaviour can include repeated alarm calls or distraction displays. Keep well back from any suspected nesting area.",
+  "Anatidae":"Watch pairs and family groups on quiet water; repeated use of sheltered vegetation may indicate breeding activity, but never approach a nest.",
+  "Strigidae":"Owls often use cavities, old nests or sheltered tree sites. Watch from a distance and avoid shining lights into a suspected nest.",
+  "Psittaculidae":"Tree cavities can be important breeding sites. Repeated visits to the same hole are a useful clue; observe from the opposite side of the area.",
+  "Columbidae":"Look for repeated visits to a sheltered tree, ledge or dense vegetation. Breeding adults can be surprisingly inconspicuous, so avoid approaching the site.",
+  "Alaudidae":"Open-ground breeding birds may rely on camouflage. Watch adults carrying food and note the direction they take rather than searching directly for a nest.",
+  "Motacillidae":"Watch for repeated food-carrying trips into low vegetation or a hidden ground site, especially during the breeding season."
+ }[family]||"For nesting, watch for repeated visits to one sheltered area or food-carrying adults rather than searching for the nest. Keep a respectful distance.";
+ const compare=[];
+ if(base)compare.push("Use this species' strongest field mark first: "+base);
+ else compare.push("Do not stop at the overall colour. Compare the face, bill, wing pattern and tail together.");
+ if(hard.length)compare.push("The closest course comparison is "+hard.join(" / ")+". Compare the specific field mark above before using habitat as a tie-breaker.");
+ else compare.push("If the view is brief, confirm the identification with the bird's call, movement and exact habitat rather than one vague resemblance.");
+ compare.push("In poor light, prioritise silhouette, contrast and behaviour; return to colour details when the bird moves into better light.");
+ return {recognize:visual,behaviour:feeding+" "+nesting,compare};
+}
+
 function current(){if(slide<intro.length)return {kind:"intro",data:intro[slide]};const n=Math.floor((slide-intro.length)/2),part=(slide-intro.length)%2;return {kind:"bird",data:birds[n],part};}
 function render(){
  const s=current(), el=document.querySelector("#lesson");
@@ -311,7 +379,7 @@ function render(){
  if(s.kind==="intro"){const d=s.data;el.innerHTML='<div class="slide intro"><div class="eyebrow">FIELD SKILLS</div><h2>'+esc(d.title)+'</h2><p class="subtitle">'+esc(d.sub)+'</p><p class="lead">'+esc(d.body)+'</p><h3>Remember</h3><ul>'+d.tips.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ul></div>';return;}
  const b=s.data, links=media(b), clue=clues[b.common]||"Begin with its overall shape, main colours, bill and tail. Watch how it moves and where it feeds; compare a few regional examples before deciding.";
  const first=s.part===0;
- el.innerHTML='<div class="slide birdslide"><div class="eyebrow">BIRD '+b.id+' OF '+birds.length+' • SLIDE '+(s.part+1)+' OF 2</div><div class="birdlayout"><div class="visual"><div class="photo" id="photo"><span>Finding a photograph…</span></div><div class="mediabtn"><a target="_blank" rel="noopener" href="'+links.photo+'">More photos</a><a target="_blank" rel="noopener" href="'+links.audio+'">Listen to recordings</a></div><p class="smallnote">Media opens from Wikimedia Commons / Xeno-canto. Check the recording or photo page for the exact species, location and licence.</p></div><div class="lessontext"><h2>'+esc(b.common)+'</h2><p class="subtitle"><i>'+esc(b.scientific)+'</i> · '+esc(b.family)+'</p><span class="tag">'+esc(b.habitat)+'</span>'+(first?'<h3>Meet the bird</h3><p>'+esc(clue)+'</p><h3>What to notice</h3><ul><li>Overall size and body shape</li><li>Bill, tail and posture</li><li>Where it is feeding or resting</li></ul><h3>Sound</h3><p>Listen for its repeated call or song. Notice the rhythm and pitch, then compare more than one recording.</p>':'<h3>Recognize it in the field</h3><p>'+esc(clue)+'</p><h3>Food, behaviour and nesting</h3><p>Watch where it searches for food and how it moves. Many birds feed, nest and display differently across seasons; avoid assuming one behaviour applies to every individual or site.</p><h3>How to tell it apart</h3><ul><li>Compare its silhouette and most distinctive visible mark with similar birds.</li><li>Use habitat and behaviour as extra clues, not as the only evidence.</li><li>Check the sound and regional photos if the view was brief or distant.</li></ul>')+'</div></div></div>';
+ el.innerHTML='<div class="slide birdslide"><div class="eyebrow">BIRD '+b.id+' OF '+birds.length+' • SLIDE '+(s.part+1)+' OF 2</div><div class="birdlayout"><div class="visual"><div class="photo" id="photo"><span>Finding a photograph…</span></div><div class="mediabtn"><a target="_blank" rel="noopener" href="'+links.photo+'">More photos</a><a target="_blank" rel="noopener" href="'+links.audio+'">Listen to recordings</a></div><p class="smallnote">Media opens from Wikimedia Commons / Xeno-canto. Check the recording or photo page for the exact species, location and licence.</p></div><div class="lessontext"><h2>'+esc(b.common)+'</h2><p class="subtitle"><i>'+esc(b.scientific)+'</i> · '+esc(b.family)+'</p><span class="tag">'+esc(b.habitat)+'</span>'+(first?'<h3>Meet the bird</h3><p>'+esc(clue)+'</p><h3>What to notice</h3><ul><li>Overall size and body shape</li><li>Bill, tail and posture</li><li>Where it is feeding or resting</li></ul><h3>Sound</h3><p>Listen for its repeated call or song. Notice the rhythm and pitch, then compare more than one recording.</p>':'<h3>Recognize it in the field</h3><p>'+esc(fieldAdvice(b).recognize)+'</p><h3>Food, behaviour and nesting</h3><p>'+esc(fieldAdvice(b).behaviour)+'</p><h3>How to tell it apart</h3><ul>'+fieldAdvice(b).compare.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>')+'</div></div></div>';
  loadPhoto(b);
 }
 async function loadPhoto(b){const holder=document.querySelector("#photo");if(!holder)return;try{const wp="https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(b.scientific);const j=await fetch(wp).then(r=>r.ok?r.json():null);const img=j?.originalimage?.source||j?.thumbnail?.source;if(img&&document.querySelector("#photo")===holder){const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.src=img;im.onerror=()=>commonsPhoto(b,holder);holder.innerHTML="";holder.appendChild(im);return;}commonsPhoto(b,holder);}catch(e){commonsPhoto(b,holder);}}
