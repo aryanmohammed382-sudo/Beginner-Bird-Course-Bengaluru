@@ -550,7 +550,23 @@ function oneProminentFeature(b){
  let feature=(clue.split(/[;,]/)[0]||"").trim();
  feature=feature.split(/\s+with\s+/i)[0].trim();
  feature=feature.split(/\s+and\s+/i)[0].trim();
- return feature||"its overall shape";
+ if(feature)return feature;
+ const familyFallback={
+  "Ardeidae":"the bill and leg colour, plus the bird's neck length",
+  "Accipitridae":"the wing and tail shape, with the strongest pale/dark pattern",
+  "Muscicapidae":"the face pattern and wing bars, plus the tail shape",
+  "Sturnidae":"the bill colour and bare eye skin, plus the head/body colour",
+  "Alcedinidae":"the bill size and colour, plus the contrast between the upperparts and belly",
+  "Scolopacidae":"the leg colour and bill shape, plus the white shoulder pattern",
+  "Charadriidae":"the face pattern and breast band, plus the leg colour",
+  "Anatidae":"the bill pattern and head shape, plus the flank pattern",
+  "Strigidae":"the eye colour and facial pattern, plus any ear tufts",
+  "Psittaculidae":"the tail length and head pattern, especially any neck collar or cheek patch",
+  "Columbidae":"the neck pattern and wing markings, plus the tail pattern",
+  "Alaudidae":"the crown and breast pattern, plus the tail shape",
+  "Motacillidae":"the eyebrow and streaking, plus the tail movement"
+ };
+ return familyFallback[b.family]||"the bird's face and bill pattern";
 }
 function questionScenario(b,i,type){
  const place=(quizPlaces[b.habitat]||quizPlaces.Woodland)[i%6],
@@ -563,16 +579,16 @@ function questionScenario(b,i,type){
 
  if(type==="field"){
   const guided=[
-   "GUIDED: At a "+place+" in Bengaluru, you see a bird "+mode+". One helpful field mark is "+feature+". Which species is it?",
-   "GUIDED: During a "+time+" walk at a "+place+", a bird appears briefly. You notice "+feature+". Which species best fits?",
+   "GUIDED: At a "+place+" in Bengaluru, you see a bird "+mode+". A helpful field mark is "+feature+". Which species is it?",
+   "GUIDED: During a "+time+" walk at a "+place+", a bird appears briefly. You notice the distinctive clue "+feature+". Which species best fits?",
    "GUIDED: You are birding at a "+place+". The bird is "+mode+" and you notice "+feature+". Which species would you record?"
   ];
   const standard=[
-   "STANDARD: At a "+place+" in Bengaluru, you see a bird "+mode+". Identify it from the bird itself, using at least two clues such as shape, plumage, bill, tail or behaviour. Do not rely on habitat alone. Which species is the best match?",
-   "STANDARD: During a "+time+" walk at a "+place+", a bird appears briefly. You have no single giveaway clue, so combine its overall shape with its plumage pattern or behaviour. Which species best fits?",
-   "STANDARD: At a "+place+", you see a bird "+mode+". First make a general identification, then check a second field mark before choosing. Which species is it?",
-   "STANDARD: A bird is feeding or resting at a "+place+". Compare its size and shape with its plumage pattern and behaviour. Which species is the best match?",
-   "STANDARD: You see a bird at a "+place+". A similar-looking species may occur in the same region, so use more than one visible clue before deciding. Which species would you choose?"
+   "STANDARD: At a "+place+" in Bengaluru, you see a bird "+mode+". A useful clue is "+feature+". Confirm it with a second visible clue such as shape, plumage, bill, tail or behaviour. Which species is the best match?",
+   "STANDARD: During a "+time+" walk at a "+place+", a bird appears briefly. You notice "+feature+". Use that partly revealing clue, then check the bird's overall appearance before choosing. Which species best fits?",
+   "STANDARD: At a "+place+", you see a bird "+mode+". One field mark to notice is "+feature+". What species does that clue, combined with the bird's overall appearance, point to?",
+   "STANDARD: A bird is feeding or resting at a "+place+". You notice "+feature+". Confirm that clue with the bird's size, shape or behaviour. Which species is the best match?",
+   "STANDARD: You see a bird at a "+place+". A similar-looking species may occur in the same region, but you notice "+feature+". Which species would you choose?"
   ];
   return (ease?guided:standard)[v%(ease?guided.length:standard.length)];
  }
@@ -582,11 +598,11 @@ function questionScenario(b,i,type){
   "GUIDED: Identify the bird in the photograph. A useful feature to notice is "+feature+". Which species is shown?"
  ];
  const standard=[
-  "STANDARD: Study the bird photograph from a "+place+" observation. Start with overall shape, then confirm the identification using its main plumage pattern. Which species is shown?",
-  "STANDARD: Look carefully at the photograph. The bird was seen at a "+place+". Use two pieces of visual evidence—such as shape plus plumage or bill—before choosing. Which species is it?",
-  "STANDARD: Identify the bird in the photograph. Focus on overall shape, main pattern and posture, then check that they agree with one another. Which species is shown?",
-  "STANDARD: A field photographer captured this bird at a "+place+". There is no giveaway clue in the question; identify it from the photo and confirm the choice with a second field mark.",
-  "STANDARD: Study the photograph from a "+time+" observation at a "+place+". Use the bird's appearance as your main evidence and habitat only as supporting context. Which species is shown?"
+  "STANDARD: Study the bird photograph from a "+place+" observation. A useful clue is "+feature+". Confirm it with the bird's overall shape and plumage. Which species is shown?",
+  "STANDARD: Look carefully at the photograph. The bird was seen at a "+place+". Notice "+feature+" and then check a second visual clue such as bill, tail or wing pattern. Which species is it?",
+  "STANDARD: Identify the bird in the photograph. One partly revealing field mark is "+feature+". Use that clue together with the bird's overall pattern. Which species is shown?",
+  "STANDARD: A field photographer captured this bird at a "+place+". Look for "+feature+". Then confirm the identification with a second field mark in the photograph.",
+  "STANDARD: Study the photograph from a "+time+" observation at a "+place+". The key clue to notice is "+feature+". Use the bird's appearance as the main evidence and habitat only as support. Which species is shown?"
  ];
  return (ease?guided:standard)[v%(ease?guided.length:standard.length)];
 }
