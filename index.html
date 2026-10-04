@@ -15,7 +15,14 @@ input,select{padding:12px;border:1px solid #cbd5cd;border-radius:9px;background:
 .coursebar{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1100px;margin:0 auto 16px;color:var(--muted);font-weight:600}.nav{display:flex;gap:8px}.nav button,.mediabtn a{border:0;border-radius:9px;padding:11px 16px;background:#236b45;color:#fff;font:inherit;text-decoration:none;cursor:pointer}.nav button:disabled{opacity:.4;cursor:not-allowed}.slide{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 5px 22px #0000000b;padding:clamp(20px,4vw,48px);max-width:1100px;margin:auto;min-height:450px}.intro{max-width:900px}.eyebrow{font-size:12px;letter-spacing:.12em;font-weight:800;color:#236b45}.slide h2{font-size:clamp(28px,4vw,42px);margin:12px 0}.subtitle{color:var(--muted);font-size:16px}.lead{font-size:20px;line-height:1.6;max-width:760px;margin:32px 0}.slide h3{margin:24px 0 8px}.slide li,.slide p{line-height:1.6}.birdlayout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,1fr);gap:30px;margin-top:22px}.photo{height:360px;background:#e7ece8;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}.photo img{width:100%;height:100%;object-fit:contain}.mediabtn{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.mediabtn a{font-size:14px}.smallnote{font-size:12px;color:var(--muted);line-height:1.45}.tag{display:inline-block;background:#e5f1e9;color:#215d3e;border-radius:999px;padding:5px 9px;font-size:12px;margin:8px 0}@media(max-width:750px){.birdlayout{grid-template-columns:1fr}.photo{height:280px}.coursebar{align-items:flex-start;flex-direction:column}.slide{min-height:0}}</style>
 <style>
 .practiceNav{background:#7a4b16!important}.quizWrap{max-width:1100px;margin:28px auto 60px}.quizCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(20px,4vw,42px);box-shadow:0 5px 22px #0000000b}.quizMeta{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:13px}.quizType{background:#f2e8d9;color:#6c461d;border-radius:999px;padding:5px 9px;font-weight:700}.quizPrompt{font-size:22px;line-height:1.5;margin:18px 0}.quizVisual{min-height:220px;background:#eef2ee;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:14px 0}.quizVisual img{max-width:100%;max-height:330px;object-fit:contain}.quizVisual svg{width:100%;height:240px}.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.choice{padding:14px;text-align:left;border:1px solid #cbd5cd;border-radius:10px;background:#fff;cursor:pointer;font:inherit}.choice:hover{border-color:#236b45}.choice.correct{background:#e3f3e8;border-color:#236b45}.choice.wrong{background:#f8e8e5;border-color:#a84d3d}.explain{margin-top:18px;padding:15px;border-radius:10px;background:#f5f7f3;line-height:1.6}.quizActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.quizActions button{border:0;border-radius:9px;padding:11px 16px;background:#236b45;color:#fff;font:inherit;cursor:pointer}.quizActions button.secondary{background:#53665a}.quizScore{font-size:28px;font-weight:800}.quizHidden{display:none}@media(max-width:700px){.choices{grid-template-columns:1fr}}
-</style><style>.quizSections{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}.sectionTab{border:1px solid #cbd5cd;border-radius:999px;padding:9px 13px;background:#fff;color:#31513f;cursor:pointer;font:inherit;font-size:13px}.sectionTab.active{background:#236b45;color:#fff;border-color:#236b45}.hintBox{margin:14px 0;padding:12px 14px;background:#f2f5f1;border-radius:10px;line-height:1.5}.hintBtn{border:1px solid #9eb0a2;border-radius:8px;background:#fff;padding:8px 11px;cursor:pointer;font:inherit}.hintBtn:disabled{opacity:.5}</style></head>
+</style><style>body.practiceStandalone{margin:0;background:#f4f6f3;overflow:auto}
+body.practiceStandalone>header,
+body.practiceStandalone>.coursebar,
+body.practiceStandalone>#lesson{display:none!important}
+body.practiceStandalone>#practice{display:block!important;position:relative;width:100%;min-height:100vh;max-width:none;margin:0;padding:28px;box-sizing:border-box}
+body.practiceStandalone>#practice .quizCard{min-height:calc(100vh - 56px);box-sizing:border-box;border-radius:0;max-width:1400px;margin:0 auto}
+body.practiceStandalone>#practice .quizSections{position:sticky;top:0;z-index:5;background:#fff;padding:10px 0}
+.quizSections{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}.sectionTab{border:1px solid #cbd5cd;border-radius:999px;padding:9px 13px;background:#fff;color:#31513f;cursor:pointer;font:inherit;font-size:13px}.sectionTab.active{background:#236b45;color:#fff;border-color:#236b45}.hintBox{margin:14px 0;padding:12px 14px;background:#f2f5f1;border-radius:10px;line-height:1.5}.hintBtn{border:1px solid #9eb0a2;border-radius:8px;background:#fff;padding:8px 11px;cursor:pointer;font:inherit}.hintBtn:disabled{opacity:.5}</style></head>
 <body>
 <header><h1>Birds of Bengaluru</h1><p>A 222-species identification course focused on field marks, habitat, behaviour, comparison, photography and sound. Built for beginner-to-intermediate birders in Bengaluru and nearby habitats. The assessment now contains 2,500 generated practice questions with balanced species coverage and switchable sections.</p></header>
 <main>
@@ -593,7 +600,7 @@ function renderQuiz(){
  document.querySelector("#showHint").onclick=()=>{document.querySelector("#hintText").classList.remove("quizHidden");document.querySelector("#showHint").disabled=true;};
  if(q.type==="photo")loadQuizPhoto(q.visual);
  document.querySelector("#nextQ").onclick=()=>{if(!quizAnswered)return;if(quizIndex<qs.length-1){quizIndex++;renderQuiz();}else finishSection();};
- document.querySelector("#quitQ").onclick=()=>{document.querySelector("#practice").classList.add("quizHidden");document.querySelector("#lesson").scrollIntoView({behavior:"smooth"});};
+ document.querySelector("#quitQ").onclick=leavePractice;
  document.querySelectorAll(".sectionTab").forEach(btn=>btn.onclick=()=>switchQuizSection(btn.dataset.section));
 }
 function switchQuizSection(section){quizSection=section;quizIndex=0;renderQuiz();}
@@ -608,11 +615,25 @@ function finishSection(){
  document.querySelectorAll(".sectionTab").forEach(btn=>btn.onclick=()=>switchQuizSection(btn.dataset.section));
  document.querySelector("#retryQuiz").onclick=()=>reattemptQuiz();
  document.querySelector("#nextSection").onclick=()=>{const order=["all","field","silhouette","photo"],n=order[(order.indexOf(quizSection)+1)%order.length];switchQuizSection(n);};
- document.querySelector("#backCourse").onclick=()=>{document.querySelector("#practice").classList.add("quizHidden");document.querySelector("#lesson").scrollIntoView({behavior:"smooth"});};
+ document.querySelector("#backCourse").onclick=leavePractice;
 }
 function reattemptQuiz(){quizSection="all";quizIndex=0;quizScore=0;quizAnswered=false;quizBankReady=false;ensureQuizBank();renderQuiz();document.querySelector("#practice").scrollIntoView({behavior:"smooth"});}
-function startQuiz(){ensureQuizBank();quizSection="all";quizIndex=0;quizScore=0;quizAnswered=false;document.querySelector("#practice").classList.remove("quizHidden");renderQuiz();document.querySelector("#practice").scrollIntoView({behavior:"smooth"});}
-document.querySelector("#practiceBtn").onclick=startQuiz;
+function openPracticeTab(){
+ const url=new URL(window.location.href);
+ url.searchParams.set("practice","1");
+ window.open(url.toString(),"_blank","noopener,noreferrer");
+}
+function leavePractice(){
+ if(window.opener){window.close();return;}
+ const url=new URL(window.location.href);url.searchParams.delete("practice");window.location.href=url.toString();
+}
+function startQuiz(reset=true){
+ ensureQuizBank();
+ if(reset){quizSection="all";quizIndex=0;quizScore=0;quizAnswered=false;}
+ document.querySelector("#practice").classList.remove("quizHidden");
+ renderQuiz();
+}
+document.querySelector("#practiceBtn").onclick=openPracticeTab;
 
 
 document.querySelector("#prev").onclick=()=>goToSlide(slide-1);
@@ -621,5 +642,13 @@ document.addEventListener("keydown",e=>{
  if(e.key==="ArrowRight")goToSlide(slide+1);
  if(e.key==="ArrowLeft")goToSlide(slide-1);
 });
-try{render();}catch(e){console.error("Course render failed:",e);document.querySelector("#lesson").innerHTML="<div class=\"slide\"><h2>Course loading error</h2><p>The lesson engine encountered an error. Refresh the page to retry.</p></div>";}</script>
+try{
+ const practiceMode=new URLSearchParams(window.location.search).get("practice")==="1";
+ if(practiceMode){document.body.classList.add("practiceStandalone");startQuiz(true);}
+ else{render();}
+}catch(e){
+ console.error("Course render failed:",e);
+ const target=document.querySelector("#lesson");
+ if(target)target.innerHTML="<div class=\"slide\"><h2>Course loading error</h2><p>The lesson engine encountered an error. Refresh the page to retry.</p></div>";
+}</script>
 </body></html>
