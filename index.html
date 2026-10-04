@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Birds of Bengaluru — 200-Species Field Course</title>
+<style>
+:root{--bg:#f5f7f3;--card:#fff;--ink:#172019;--muted:#5f6b62;--accent:#236b45;--line:#dbe3dc}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#173d2a;color:#fff;padding:32px 5vw}header h1{margin:0 0 8px;font-size:clamp(28px,5vw,48px)}header p{margin:0;max-width:900px;opacity:.9}
+main{max-width:1250px;margin:auto;padding:24px 4vw}.controls{position:sticky;top:0;z-index:3;background:rgba(245,247,243,.96);padding:14px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+input,select{padding:12px;border:1px solid #cbd5cd;border-radius:9px;background:white;font-size:15px}.count{color:var(--muted);margin:15px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;overflow:hidden;box-shadow:0 2px 10px #0000000b}.photo{height:220px;background:#e7ece8;display:flex;align-items:center;justify-content:center}.photo img{width:100%;height:100%;object-fit:cover}.photo span{color:var(--muted);padding:20px;text-align:center}.body{padding:17px}.body h2{font-size:21px;margin:0 0 4px}.sci{font-style:italic;color:var(--muted);font-size:14px}.tag{display:inline-block;background:#e5f1e9;color:#215d3e;border-radius:999px;padding:4px 8px;font-size:12px;margin:9px 4px 9px 0}.fact{margin:8px 0;font-size:14px;line-height:1.45}.fact b{color:#31513f}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions a{color:#fff;background:#236b45;text-decoration:none;padding:9px 11px;border-radius:8px;font-size:13px}.actions a.secondary{background:#53665a}.sources{margin-top:30px;padding:18px;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--muted);line-height:1.6}
+@media(max-width:700px){.controls{grid-template-columns:1fr;position:static}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>Birds of Bengaluru</h1><p>A 200-species identification course focused on field marks, habitat, behaviour, comparison, photography and sound. Built for beginner-to-intermediate birders in Bengaluru and nearby habitats.</p></header>
+<main>
+<div class="controls">
+<input id="q" placeholder="Search common name, scientific name, or ID clue…">
+<select id="group"><option value="">All groups</option></select>
+<select id="habitat"><option value="">All habitats</option><option>Urban & gardens</option><option>Woodland</option><option>Wetlands</option><option>Grassland & scrub</option><option>Open country</option><option>Seasonal migrant</option></select>
+</div>
+<div class="count" id="count"></div><section class="grid" id="grid"></section>
+<section class="sources"><b>Media & accuracy policy</b><br>
+Photos are retrieved from Wikimedia Commons search results at viewing time rather than copied into this repository. Each card also links to Cornell eBird/Macaulay Library for regional photographs and sound recordings, and to Xeno-canto for field recordings. Always check the recording/photo page for its attribution and licence before reusing media outside this course. Species names are aligned to the Bengaluru regional checklist used for this course; local occurrence can be seasonal or habitat-specific.
+<br><br><b>Important:</b> this repository intentionally links to authoritative media rather than redistributing third-party recordings. The sound buttons open the relevant recording/search collection so learners can hear the species and inspect attribution.
+</section>
+</main>
+<script>
+const raw = `
+House Crow|Corvus splendens|Corvidae|Urban & gardens
+Common Myna|Acridotheres tristis|Sturnidae|Urban & gardens
+Rose-ringed Parakeet|Psittacula krameri|Psittaculidae|Urban & gardens
+Red-vented Bulbul|Pycnonotus cafer|Pycnonotidae|Urban & gardens
+White-cheeked Barbet|Psilopogon viridis|Megalaimidae|Woodland
+Asian Koel|Eudynamys scolopaceus|Cuculidae|Urban & gardens
+Oriental Magpie-Robin|Copsychus saularis|Muscicapidae|Urban & gardens
+Purple-rumped Sunbird|Leptocoma zeylonica|Nectariniidae|Urban & gardens
+Ashy Prinia|Prinia socialis|Cisticolidae|Grassland & scrub
+Indian Pond Heron|Ardeola grayii|Ardeidae|Wetlands
+White-throated Kingfisher|Halcyon smyrnensis|Alcedinidae|Wetlands
+Black Kite|Milvus migrans|Accipitridae|Urban & gardens
+Brahminy Kite|Haliastur indus|Accipitridae|Wetlands
+Greater Coucal|Centropus sinensis|Cuculidae|Grassland & scrub
+Indian Peafowl|Pavo cristatus|Phasianidae|Open country
+Spotted Dove|Spilopelia chinensis|Columbidae|Urban & gardens
+Indian Robin|Copsychus fulicatus|Muscicapidae|Open country
+Jungle Babbler|Argya striata|Leiothrichidae|Urban & gardens
+Large Grey Babbler|Argya malcolmi|Leiothrichidae|Open country
+Yellow-billed Babbler|Turdoides affinis|Leiothrichidae|Woodland
+Common Babbler|Argya caudata|Leiothrichidae|Grassland & scrub
+Yellow-eyed Babbler|Chrysomma sinense|Zosteropidae|Grassland & scrub
+Tawny-bellied Babbler|Dumetia hyperythra|Pellorneidae|Woodland
+Puff-throated Babbler|Pellorneum ruficeps|Pellorneidae|Woodland
+Indian Scimitar-Babbler|Pomatorhinus horsfieldii|Timaliidae|Woodland
+Brown-headed Barbet|Psilopogon zeylanicus|Megalaimidae|Woodland
+Coppersmith Barbet|Psilopogon haemacephalus|Megalaimidae|Urban & gardens
+Malabar Barbet|Psilopogon malabaricus|Megalaimidae|Woodland
+Asian Green Bee-eater|Merops orientalis|Meropidae|Open country
+Blue-tailed Bee-eater|Merops philippinus|Meropidae|Seasonal migrant
+Chestnut-headed Bee-eater|Merops leschenaulti|Meropidae|Woodland
+European Bee-eater|Merops apiaster|Meropidae|Seasonal migrant
+Blue-bearded Bee-eater|Nyctyornis athertoni|Meropidae|Woodland
+Cinnamon Bittern|Ixobrychus cinnamomeus|Ardeidae|Wetlands
+Yellow Bittern|Ixobrychus sinensis|Ardeidae|Wetlands
+Black Bittern|Ixobrychus flavicollis|Ardeidae|Wetlands
+Red-whiskered Bulbul|Pycnonotus jocosus|Pycnonotidae|Woodland
+White-browed Bulbul|Pycnonotus luteolus|Pycnonotidae|Grassland & scrub
+Yellow-browed Bulbul|Acritillas indica|Pycnonotidae|Woodland
+Yellow-throated Bulbul|Pycnonotus xantholaemus|Pycnonotidae|Woodland
+Flame-throated Bulbul|Rubigula gularis|Pycnonotidae|Woodland
+Grey-headed Bulbul|Brachypodius priocephalus|Pycnonotidae|Woodland
+Indian Cormorant|Nannopterum fuscicollis|Phalacrocoracidae|Wetlands
+Great Cormorant|Phalacrocorax carbo|Phalacrocoracidae|Wetlands
+Little Cormorant|Microcarbo niger|Phalacrocoracidae|Wetlands
+Oriental Darter|Anhinga melanogaster|Anhingidae|Wetlands
+Indian Cuckoo|Cuculus micropterus|Cuculidae|Woodland
+Common Hawk-Cuckoo|Hierococcyx varius|Cuculidae|Woodland
+Large Hawk-Cuckoo|Hierococcyx sparverioides|Cuculidae|Woodland
+Pied Cuckoo|Clamator jacobinus|Cuculidae|Seasonal migrant
+Banded Bay Cuckoo|Cacomantis sonneratii|Cuculidae|Woodland
+Grey-bellied Cuckoo|Cacomantis passerinus|Cuculidae|Woodland
+Chestnut-winged Cuckoo|Clamator coromandus|Cuculidae|Woodland
+Sirkeer Malkoha|Taccocua leschenaultii|Cuculidae|Grassland & scrub
+Blue-faced Malkoha|Phaenicophaeus viridirostris|Cuculidae|Woodland
+Lesser Coucal|Centropus bengalensis|Cuculidae|Grassland & scrub
+Asian Emerald Dove|Chalcophaps indica|Columbidae|Woodland
+Laughing Dove|Spilopelia senegalensis|Columbidae|Open country
+Eurasian Collared-Dove|Streptopelia decaocto|Columbidae|Urban & gardens
+Oriental Turtle-Dove|Streptopelia orientalis|Columbidae|Woodland
+Rock Pigeon|Columba livia|Columbidae|Urban & gardens
+Yellow-footed Green-Pigeon|Treron phoenicopterus|Columbidae|Woodland
+Orange-breasted Green-Pigeon|Treron bicinctus|Columbidae|Woodland
+Green Imperial-Pigeon|Ducula aenea|Columbidae|Woodland
+Mountain Imperial-Pigeon|Ducula badia|Columbidae|Woodland
+Malabar Imperial-Pigeon|Ducula cuprea|Columbidae|Woodland
+Nilgiri Wood-Pigeon|Columba elphinstonii|Columbidae|Woodland
+Red Collared-Dove|Streptopelia tranquebarica|Columbidae|Open country
+Northern Pintail|Anas acuta|Anatidae|Seasonal migrant
+Eurasian Wigeon|Mareca penelope|Anatidae|Seasonal migrant
+Northern Shoveler|Spatula clypeata|Anatidae|Seasonal migrant
+Bar-headed Goose|Anser indicus|Anatidae|Seasonal migrant
+Garganey|Spatula querquedula|Anatidae|Seasonal migrant
+Cotton Pygmy-Goose|Nettapus coromandelianus|Anatidae|Wetlands
+Little Grebe|Tachybaptus ruficollis|Podicipedidae|Wetlands
+Common Pochard|Aythya ferina|Anatidae|Seasonal migrant
+Common Teal|Anas crecca|Anatidae|Seasonal migrant
+Indian Spot-billed Duck|Anas poecilorhyncha|Anatidae|Wetlands
+Gadwall|Mareca strepera|Anatidae|Seasonal migrant
+Lesser Whistling-Duck|Dendrocygna javanica|Anatidae|Wetlands
+Spot-billed Pelican|Pelecanus philippensis|Pelecanidae|Wetlands
+Great Egret|Ardea alba|Ardeidae|Wetlands
+Intermediate Egret|Ardea intermedia|Ardeidae|Wetlands
+Little Egret|Egretta garzetta|Ardeidae|Wetlands
+Cattle Egret|Bubulcus ibis|Ardeidae|Open country
+Grey Heron|Ardea cinerea|Ardeidae|Wetlands
+Purple Heron|Ardea purpurea|Ardeidae|Wetlands
+Striated Heron|Butorides striata|Ardeidae|Wetlands
+Black-crowned Night Heron|Nycticorax nycticorax|Ardeidae|Wetlands
+Red-naped Ibis|Pseudibis papillosa|Threskiornithidae|Open country
+Black-headed Ibis|Threskiornis melanocephalus|Threskiornithidae|Wetlands
+Glossy Ibis|Plegadis falcinellus|Threskiornithidae|Wetlands
+Eurasian Spoonbill|Platalea leucorodia|Threskiornithidae|Wetlands
+Taiga Flycatcher|Ficedula albicilla|Muscicapidae|Seasonal migrant
+Red-breasted Flycatcher|Ficedula parva|Muscicapidae|Seasonal migrant
+Rusty-tailed Flycatcher|Ficedula ruficauda|Muscicapidae|Woodland
+Black-and-orange Flycatcher|Ficedula nigrorufa|Muscicapidae|Woodland
+Nilgiri Flycatcher|Eumyias albicaudatus|Muscicapidae|Woodland
+Grey-headed Canary-Flycatcher|Culicicapa ceylonensis|Stenostiridae|Woodland
+Verditer Flycatcher|Eumyias thalassinus|Muscicapidae|Seasonal migrant
+White-bellied Blue Flycatcher|Cyornis pallipes|Muscicapidae|Woodland
+Brown-breasted Flycatcher|Muscicapa muttui|Muscicapidae|Woodland
+Asian Brown Flycatcher|Muscicapa dauurica|Muscicapidae|Seasonal migrant
+Black-naped Monarch|Hypothymis azurea|Monarchidae|Woodland
+Spot-breasted Fantail|Rhipidura albogularis|Rhipiduridae|Woodland
+Tickell's Blue Flycatcher|Cyornis tickelliae|Muscicapidae|Woodland
+Indian Paradise-Flycatcher|Terpsiphone paradisi|Monarchidae|Woodland
+Common Kingfisher|Alcedo atthis|Alcedinidae|Wetlands
+Stork-billed Kingfisher|Pelargopsis capensis|Alcedinidae|Wetlands
+Pied Kingfisher|Ceryle rudis|Alcedinidae|Wetlands
+Black-capped Kingfisher|Todiramphus pileatus|Alcedinidae|Woodland
+Blue-eared Kingfisher|Alcedo meninting|Alcedinidae|Woodland
+Oriental Dwarf Kingfisher|Ceyx erithaca|Alcedinidae|Woodland
+Jerdon's Bushlark|Mirafra affinis|Alaudidae|Grassland & scrub
+Malabar Lark|Galerida malabarica|Alaudidae|Grassland & scrub
+Oriental Skylark|Alauda gulgula|Alaudidae|Grassland & scrub
+Indian Bushlark|Mirafra erythroptera|Alaudidae|Grassland & scrub
+Singing Bushlark|Mirafra cantillans|Alaudidae|Grassland & scrub
+Ashy-crowned Sparrow-Lark|Eremopterix griseus|Alaudidae|Open country
+Tawny Lark|Galerida deva|Alaudidae|Open country
+White-bellied Minivet|Pericrocotus erythropygius|Campephagidae|Woodland
+Brown-rumped Minivet|Pericrocotus cantonensis|Campephagidae|Seasonal migrant
+Ashy Minivet|Pericrocotus divaricatus|Campephagidae|Seasonal migrant
+Orange Minivet|Pericrocotus flammeus|Campephagidae|Woodland
+Small Minivet|Pericrocotus cinnamomeus|Campephagidae|Woodland
+Rosy Starling|Pastor roseus|Sturnidae|Seasonal migrant
+European Starling|Sturnus vulgaris|Sturnidae|Seasonal migrant
+Malabar Starling|Sturnia blythii|Sturnidae|Woodland
+Chestnut-tailed Starling|Sturnia malabarica|Sturnidae|Woodland
+Common Hill Myna|Gracula religiosa|Sturnidae|Woodland
+Jungle Myna|Acridotheres fuscus|Sturnidae|Open country
+Brahminy Starling|Sturnia pagodarum|Sturnidae|Open country
+Southern Hill Myna|Gracula indica|Sturnidae|Woodland
+Savanna Nightjar|Caprimulgus affinis|Caprimulgidae|Open country
+Jungle Nightjar|Caprimulgus indicus|Caprimulgidae|Woodland
+Jerdon's Nightjar|Caprimulgus atripennis|Caprimulgidae|Open country
+Indian Nightjar|Caprimulgus asiaticus|Caprimulgidae|Open country
+Sri Lanka Frogmouth|Batrachostomus moniliger|Podargidae|Woodland
+Black-hooded Oriole|Oriolus xanthornus|Oriolidae|Woodland
+Indian Golden Oriole|Oriolus kundoo|Oriolidae|Woodland
+Eurasian Golden Oriole|Oriolus oriolus|Oriolidae|Seasonal migrant
+Black-naped Oriole|Oriolus chinensis|Oriolidae|Woodland
+Indian Scops-Owl|Otus bakkamoena|Strigidae|Woodland
+Oriental Scops-Owl|Otus sunia|Strigidae|Woodland
+Mottled Wood-Owl|Strix ocellata|Strigidae|Woodland
+Asian Barn Owl|Tyto javanica|Tytonidae|Urban & gardens
+Jungle Owlet|Glaucidium radiatum|Strigidae|Woodland
+Spotted Owlet|Athene brama|Strigidae|Urban & gardens
+Brown Fish-Owl|Ketupa zeylonensis|Strigidae|Wetlands
+Brown Wood-Owl|Strix leptogrammica|Strigidae|Woodland
+Rock Eagle-Owl|Bubo bengalensis|Strigidae|Open country
+Spot-bellied Eagle-Owl|Ketupa nipalensis|Strigidae|Woodland
+Grey Junglefowl|Gallus sonneratii|Phasianidae|Woodland
+Red Spurfowl|Galloperdix spadicea|Phasianidae|Woodland
+Alexandrine Parakeet|Psittacula eupatria|Psittaculidae|Woodland
+Plum-headed Parakeet|Psittacula cyanocephala|Psittaculidae|Woodland
+Malabar Parakeet|Psittacula columboides|Psittaculidae|Woodland
+Vernal Hanging-Parrot|Loriculus vernalis|Psittaculidae|Woodland
+Tawny Pipit|Anthus campestris|Motacillidae|Seasonal migrant
+Olive-backed Pipit|Anthus hodgsoni|Motacillidae|Seasonal migrant
+Tree Pipit|Anthus trivialis|Motacillidae|Seasonal migrant
+Nilgiri Pipit|Anthus nilghiriensis|Motacillidae|Woodland
+Paddyfield Pipit|Anthus rufulus|Motacillidae|Open country
+Richard's Pipit|Anthus richardi|Motacillidae|Seasonal migrant
+Blyth's Pipit|Anthus godlewskii|Motacillidae|Seasonal migrant
+Blue Rock-Thrush|Monticola solitarius|Muscicapidae|Seasonal migrant
+Malabar Whistling-Thrush|Myophonus horsfieldii|Muscicapidae|Woodland
+Indian Blue Robin|Larvivora brunnea|Muscicapidae|Seasonal migrant
+Nilgiri Sholakili|Sholicola major|Muscicapidae|Woodland
+Common Stonechat|Saxicola torquatus|Muscicapidae|Seasonal migrant
+White-rumped Shama|Kittacincla malabarica|Muscicapidae|Woodland
+Pied Bushchat|Saxicola caprata|Muscicapidae|Open country
+Blue-capped Rock-Thrush|Monticola cinclorhyncha|Muscicapidae|Seasonal migrant
+Orange-headed Thrush|Geokichla citrina|Turdidae|Woodland
+Pied Thrush|Geokichla wardii|Turdidae|Seasonal migrant
+Indian Blackbird|Turdus simillimus|Turdidae|Woodland
+Indian Thick-knee|Burhinus indicus|Burhinidae|Open country
+Pin-tailed Snipe|Gallinago stenura|Scolopacidae|Seasonal migrant
+Common Snipe|Gallinago gallinago|Scolopacidae|Seasonal migrant
+Common Greenshank|Tringa nebularia|Scolopacidae|Seasonal migrant
+Wood Sandpiper|Tringa glareola|Scolopacidae|Seasonal migrant
+Green Sandpiper|Tringa ochropus|Scolopacidae|Seasonal migrant
+Little Stint|Calidris minuta|Scolopacidae|Seasonal migrant
+Temminck's Stint|Calidris temminckii|Scolopacidae|Seasonal migrant
+Little Ringed Plover|Charadrius dubius|Charadriidae|Seasonal migrant
+Black-winged Stilt|Himantopus himantopus|Recurvirostridae|Wetlands
+Pied Avocet|Recurvirostra avosetta|Recurvirostridae|Seasonal migrant
+Black-tailed Godwit|Limosa limosa|Scolopacidae|Seasonal migrant
+Bronze-winged Jacana|Metopidius indicus|Jacanidae|Wetlands
+Pheasant-tailed Jacana|Hydrophasianus chirurgus|Jacanidae|Wetlands
+Common Sandpiper|Actitis hypoleucos|Scolopacidae|Seasonal migrant
+Eurasian Curlew|Numenius arquata|Scolopacidae|Seasonal migrant
+Red-wattled Lapwing|Vanellus indicus|Charadriidae|Wetlands
+Yellow-wattled Lapwing|Vanellus malabaricus|Charadriidae|Open country
+River Tern|Sterna aurantia|Laridae|Wetlands
+Gull-billed Tern|Gelochelidon nilotica|Laridae|Seasonal migrant
+Whiskered Tern|Chlidonias hybrida|Laridae|Wetlands
+Caspian Tern|Hydroprogne caspia|Laridae|Seasonal migrant
+Indian Courser|Cursorius coromandelicus|Glareolidae|Open country
+Greater Painted-Snipe|Rostratula benghalensis|Rostratulidae|Wetlands
+Barred Buttonquail|Turnix suscitator|Turnicidae|Grassland & scrub
+Yellow-legged Buttonquail|Turnix tanki|Turnicidae|Seasonal migrant
+Small Pratincole|Glareola lactea|Glareolidae|Open country
+Bay-backed Shrike|Lanius vittatus|Laniidae|Open country
+Long-tailed Shrike|Lanius schach|Laniidae|Open country
+Great Grey Shrike|Lanius excubitor|Laniidae|Seasonal migrant
+Common Woodshrike|Tephrodornis pondicerianus|Tephrodornithidae|Woodland
+Malabar Woodshrike|Tephrodornis sylvicola|Tephrodornithidae|Woodland
+Large Woodshrike|Tephrodornis virgatus|Tephrodornithidae|Woodland
+Black-winged Kite|Elanus caeruleus|Accipitridae|Open country
+Shikra|Accipiter badius|Accipitridae|Urban & gardens
+Crested Serpent-Eagle|Spilornis cheela|Accipitridae|Woodland
+Oriental Honey-buzzard|Pernis ptilorhynchus|Accipitridae|Woodland
+White-eyed Buzzard|Butastur teesa|Accipitridae|Open country
+Peregrine Falcon|Falco peregrinus|Falconidae|Urban & gardens
+Eurasian Kestrel|Falco tinnunculus|Falconidae|Open country
+Osprey|Pandion haliaetus|Pandionidae|Seasonal migrant
+Bonelli's Eagle|Aquila fasciata|Accipitridae|Woodland
+Changeable Hawk-Eagle|Nisaetus cirrhatus|Accipitridae|Woodland
+Black Eagle|Ictinaetus malaiensis|Accipitridae|Woodland
+Crested Goshawk|Accipiter trivirgatus|Accipitridae|Woodland
+Short-toed Snake-Eagle|Circaetus gallicus|Accipitridae|Open country
+`.trim().split('\n').map((s,i)=>{const [common,scientific,family,habitat]=s.split('|');return {id:i+1,common,scientific,family,habitat}});
+
+const clues={
+"House Crow":"Grey neck contrasts with black head and body; very familiar urban corvid.",
+"Common Myna":"Chocolate-brown body, black head, yellow bare skin around eye and yellow bill/legs.",
+"Rose-ringed Parakeet":"Long pointed tail; adult male has a dark-and-rose neck ring, females lack the strong ring.",
+"Red-vented Bulbul":"Black crest, brown body and unmistakable red undertail vent.",
+"White-cheeked Barbet":"Green barbet with pale cheek patch; repeated tuk-tuk call is often easier than seeing it.",
+"Asian Koel":"Male glossy black with red eye; female brown and heavily spotted; loud rising koo-oo call.",
+"Oriental Magpie-Robin":"Black-and-white, cocked tail; males sing strongly from exposed perches.",
+"Purple-rumped Sunbird":"Tiny nectar feeder; male shows purple rump and strong yellow/blue-purple patterning.",
+"Ashy Prinia":"Small long-tailed warbler of grass and scrub; repeated calls and tail flicking are useful.",
+"Indian Pond Heron":"Brown cryptic bird at rest, but wings flash white in flight.",
+"White-throated Kingfisher":"Bright blue wings, chocolate head/body, white throat and huge red bill.",
+"Black Kite":"Long-fingered wings and forked tail; common soaring scavenger over the city.",
+"Brahminy Kite":"Chestnut body with brilliant white head and breast; usually associated with water or open country.",
+"Greater Coucal":"Large, slow, dark cuckoo with chestnut wings and long graduated tail; deep booming calls.",
+"Indian Peafowl":"Large blue male with spectacular train; female is brown and lacks the train.",
+"Spotted Dove":"Soft grey-pink dove with black-and-white spotted neck patch and spotted wings.",
+"Indian Robin":"Male black with white shoulder/undertail contrast; often tail cocked in dry open ground.",
+"Jungle Babbler":"Brown-grey, social and noisy; flocks move together through gardens and scrub.",
+"Large Grey Babbler":"Paler, longer-tailed babbler of dry open country; compare size and tail with Jungle Babbler.",
+"Yellow-billed Babbler":"Pale eye and yellow bill; strongly social southern babbler, often in scrub and woodland.",
+"Coppersmith Barbet":"Green with red/yellow facial and throat markings; rhythmic coppersmith-like call.",
+"Asian Green Bee-eater":"Slender green bee-eater with black eye mask, pointed wings and long central tail feathers.",
+"Common Kingfisher":"Small blue-and-orange kingfisher; compact bill and fast low flight along water.",
+"Stork-billed Kingfisher":"Huge red bill and orange head/body; much larger and heavier than Common Kingfisher.",
+"Pied Kingfisher":"Black-and-white, crest-headed kingfisher; often hovers over water before diving.",
+"Spotted Owlet":"Small owl with pale facial disk and many white spots; often active at dusk/day.",
+"Black-winged Kite":"Small pale raptor with black shoulder patches; hovers while hunting over grassland.",
+"Shikra":"Small accipiter with barred underparts and long tail; fast, direct woodland flight.",
+"Red-wattled Lapwing":"Black head/chest, white belly, brown wings and red facial wattle; loud alarm call.",
+"Black-winged Stilt":"Very long pink legs, slim black-and-white body; wades in shallow water.",
+"Bronze-winged Jacana":"Long toes for walking floating vegetation; bronze wings and dark body.",
+"Common Sandpiper":"Small wader with white shoulder wedge, bobbing rear and habit of feeding alone at water edges.",
+"Common Greenshank":"Large elegant wader with long slightly upturned bill and greenish legs.",
+"Yellow-wattled Lapwing":"Small dry-country lapwing with yellow facial wattles and yellow legs.",
+"Indian Thick-knee":"Large nocturnal-looking ground bird with huge eyes and thick knees; cryptic sandy plumage.",
+"Peregrine Falcon":"Powerful falcon with dark hood and moustache; very fast, pointed-wing hunter.",
+"Oriental Paradise-Flycatcher":"Long-tailed males; white or rufous morphs; graceful sallies from woodland.",
+"Indian Paradise-Flycatcher":"Long-tailed males; white or rufous morphs; graceful sallies from woodland.",
+"Common Hill Myna":"Glossy black myna with bright yellow/orange wattles; famous rich mimicry.",
+"White-rumped Shama":"Dark glossy songbird with white rump and long graduated tail; superb songster in dense vegetation."
+};
+
+function norm(s){return s.toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9 ]/g," ")}
+function mediaLinks(b){
+ const q=encodeURIComponent(b.common+" "+b.scientific);
+ return {
+  image:"https://commons.wikimedia.org/w/index.php?search="+q+"&title=Special:MediaSearch&type=image",
+  audio:"https://www.xeno-canto.org/explore?query="+q,
+  macaulay:"https://search.macaulaylibrary.org/catalog?taxonCode="+encodeURIComponent(b.scientific)
+ };
+}
+async function loadImage(card,b){
+ const holder=card.querySelector(".photo");
+ const q=encodeURIComponent(b.common+" "+b.scientific);
+ try{
+  const u="https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="+q+"&gsrnamespace=6&gsrlimit=5&prop=imageinfo&iiprop=url&iiurlwidth=900&format=json&origin=*";
+  const j=await fetch(u).then(r=>r.json());
+  const pages=Object.values(j.query?.pages||{});
+  const p=pages.find(x=>x.imageinfo?.[0]?.thumburl||x.imageinfo?.[0]?.url);
+  if(p){const im=document.createElement("img");im.loading="lazy";im.alt=b.common+" — Wikimedia Commons";im.src=p.imageinfo[0].thumburl||p.imageinfo[0].url;im.onerror=()=>holder.innerHTML="<span>Image unavailable — open the Commons link below.</span>";holder.innerHTML="";holder.appendChild(im);}
+ }catch(e){}
+}
+function card(b){
+ const c=document.createElement("article");c.className="card";
+ const links=mediaLinks(b); const clue=clues[b.common]||("Field lesson: learn the silhouette, primary colours, bill shape, habitat and behaviour first; then confirm with a regional photograph and recording.");
+ c.innerHTML='<div class="photo"><span>Loading verified Wikimedia Commons image…</span></div><div class="body"><h2>'+b.id+'. '+b.common+'</h2><div class="sci">'+b.scientific+'</div><span class="tag">'+b.family+'</span><span class="tag">'+b.habitat+'</span><div class="fact"><b>Key field mark:</b> '+clue+'</div><div class="fact"><b>Compare:</b> Use the scientific-name and habitat context, then compare the linked regional photos/recordings before making a difficult identification.</div><div class="actions"><a target="_blank" rel="noopener" href="'+links.image+'">📷 Commons photos</a><a target="_blank" rel="noopener" href="'+links.audio+'">🔊 Xeno-canto audio</a><a class="secondary" target="_blank" rel="noopener" href="'+links.macaulay+'">🎧 Macaulay / eBird</a></div></div>';
+ loadImage(c,b); return c;
+}
+const groups=[...new Set(raw.map(x=>x.family))].sort(); for(const g of groups) group.insertAdjacentHTML("beforeend",'<option>'+g+'</option>');
+function render(){
+ const q=norm(document.querySelector("#q").value), g=document.querySelector("#group").value, h=document.querySelector("#habitat").value;
+ const arr=raw.filter(b=>(!q||norm(b.common+" "+b.scientific+" "+b.family+" "+b.habitat+" "+(clues[b.common]||"")).includes(q))&&(!g||b.family===g)&&(!h||b.habitat===h));
+ count.textContent=arr.length+" species shown • "+raw.length+" species in course";
+ grid.innerHTML="";arr.forEach(b=>grid.appendChild(card(b)));
+}
+q.oninput=render;group.onchange=render;habitat.onchange=render;render();
+</script>
+</body></html>
