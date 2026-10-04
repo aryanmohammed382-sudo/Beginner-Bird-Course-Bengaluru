@@ -554,7 +554,7 @@ function oneProminentFeature(b){
 }
 function questionScenario(b,i,type){
  const place=(quizPlaces[b.habitat]||quizPlaces.Woodland)[i%6],time=quizTimes[Math.floor(i/6)%quizTimes.length],mode=quizModes[Math.floor(i/48)%quizModes.length],sound=quizSound(b),v=i%12;
- const ease=i%10<3;
+ const ease=i%10<4;
  const feature=oneProminentFeature(b);
  if(type==="field"){
   const a=[
@@ -577,7 +577,7 @@ function questionScenario(b,i,type){
    "A bird crosses the sky or vegetation at a "+place+". Its silhouette is clear for a moment while it is "+mode+". Which candidate fits the structure without depending on a single colour patch?",
    "The photograph is intentionally treated as a silhouette at a "+place+". You can use posture, proportions and movement, but not fine plumage. Which species is the best match?"
   ];
-  return a[v%a.length];
+  return ease?a[v%a.length]+" One helpful feature to remember is "+feature+".":a[v%a.length];
  }
  const a=[
   "Study the taxon photograph carefully. The encounter is framed as a "+time+" observation at a "+place+". Which species is shown? Defend the identification with at least two visible features rather than colour alone.",
