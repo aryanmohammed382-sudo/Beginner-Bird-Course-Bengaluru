@@ -360,29 +360,38 @@ function silhouetteSVG(b){
 function fieldQuestions(){
  const targets=[birds[0],birds[4],birds[5],birds[6],birds[7],birds[8],birds[9],birds[10],birds[11],birds[12],birds[13],birds[16],birds[17],birds[18],birds[20],birds[22],birds[27],birds[28],birds[30],birds[31],birds[34],birds[40],birds[41],birds[43],birds[47],birds[49],birds[54],birds[56],birds[61],birds[67],birds[72],birds[77],birds[80],birds[83],birds[88],birds[94],birds[101],birds[104],birds[108],birds[113],birds[120],birds[128],birds[135],birds[145],birds[155],birds[166],birds[181],birds[194],birds[207],birds[218]];
  const templates=[
-  b=>({prompt:"At "+regionTips[b.habitat]+", you notice a bird that "+(clues[b.common]||"moves in a characteristic way and shows a distinctive bill/tail combination")+" . The view lasts only a few seconds. Which identification best fits?",ex:"The useful combination is the bird's structure plus behaviour; habitat alone would be too weak."}),
-  b=>({prompt:"You are watching "+regionTips[b.habitat]+". The bird stays low and keeps "+(b.family==="Muscicapidae"?"making short sallies from a perch":"moving between feeding spots")+" rather than behaving like a typical open-country bird. Which species from the choices deserves the closest check?",ex:"Use the whole observation: structure, movement, microhabitat and the strongest field mark."}),
-  b=>({prompt:"A birder reports: ""+(clues[b.common]||"The bird had a distinctive silhouette, bill and feeding behaviour.")+"". Which species should you test first, and what would you compare before confirming it?",ex:"A strong field identification is a hypothesis to test against close alternatives, not a guess from one colour."}),
-  b=>({prompt:"Near Bengaluru, you get an incomplete view: the bird's "+(b.habitat==="Wetlands"?"legs/bill and feeding posture":"tail, posture and flight style")+" are clearer than its colours. Which species is the best match?",ex:"When colour is unreliable because of distance or light, shape and behaviour become more valuable."})
+  b=>"At "+regionTips[b.habitat]+", you get a 5–10 second view. The bird's overall build is clearer than its colour, and its feeding movement is more informative than its call. Which choice should you investigate first?",
+  b=>"At "+regionTips[b.habitat]+", a bird moves through the habitat without behaving like the most obvious species you would expect there. You notice its "+(b.family==="Ardeidae"?"bill and leg proportions":b.family==="Accipitridae"||b.family==="Falconidae"?"wing shape and tail":b.family==="Muscicapidae"?"posture and perch-to-ground movement":"tail length and body shape")+". Which identification is best supported?",
+  b=>"A field note from Bengaluru reads: ""+regionTips[b.habitat]+"; brief view; bird remained "+(b.habitat==="Wetlands"?"close to the water edge":"within the vegetation/open ground")+"; size was estimated relative to a common myna; one structural feature was obvious but plumage was poorly lit." Which candidate deserves the closest comparison?",
+  b=>"You are identifying a distant bird through heat haze. Habitat narrows the list, but two choices look plausible. The deciding evidence is more likely to come from "+(b.habitat==="Wetlands"?"leg length, bill shape and feeding posture":"silhouette, tail shape and movement")+" than from fine colour. Which bird fits the combined evidence?",
+  b=>"A companion calls it a familiar Bengaluru bird, but you are not convinced. Your notes say: "+regionTips[b.habitat]+"; "+(b.family==="Muscicapidae"?"frequent short flights from low perches":b.family==="Accipitridae"||b.family==="Falconidae"?"active flight with a strong, purposeful wingbeat":b.family==="Ardeidae"?"slow movement while scanning shallow water":"repeated movement between nearby feeding spots")+". Which answer is most defensible?"
  ];
- return targets.map((b,i)=>{const t=templates[i%templates.length](b);return {type:"field",answer:b.common,prompt:t.prompt,explain:t.ex,choices:uniqueChoices(b)}});
+ return targets.map((b,i)=>({type:"field",answer:b.common,prompt:templates[i%templates.length](b),explain:"Do not accept a habitat-only identification. The intended skill is combining location, body shape, movement and one dependable field mark before committing.",choices:uniqueChoices(b)}));
 }
 function silhouetteQuestions(){
  const pool=birds.filter(b=>["Wetlands","Open country","Grassland & scrub","Seasonal migrant","Woodland"].includes(b.habitat));
+ const templates=[
+  b=>"The silhouette is intentionally missing plumage detail. In "+regionTips[b.habitat]+", which candidate best fits the body proportions shown? Treat the habitat as a filter, not proof.",
+  b=>"From a backlit view you can only judge outline, bill projection and leg length. The setting is "+regionTips[b.habitat]+". Which species should you compare first?",
+  b=>"A distant bird is reduced to a dark outline. It is roughly the size implied by the silhouette and is using "+regionTips[b.habitat]+". Which option is the strongest structural match?",
+  b=>"Ignore colour completely. Use the outline, posture and the Bengaluru setting—"+regionTips[b.habitat]+"—to choose the best candidate. Which distractor would you want to rule out next?",
+  b=>"The bird is partly obscured, so only silhouette and habitat survive. The habitat is "+regionTips[b.habitat]+". Which identification is most consistent with the shape before any plumage clues are added?"
+ ];
  const qs=[];
- for(let i=0;i<100;i++){
-   const b=pool[(i*7+13)%pool.length];
-   qs.push({type:"silhouette",answer:b.common,prompt:"The silhouette is intentionally stripped of plumage detail. Combine it with this Bengaluru context: "+regionTips[b.habitat]+". Which species is the strongest candidate?",visual:b,explain:"The exercise is designed to force structure-first identification. After choosing, compare bill size, tail, leg length, posture and the habitat clue." ,choices:uniqueChoices(b)});
- }
+ for(let i=0;i<100;i++){const b=pool[(i*7+13)%pool.length];qs.push({type:"silhouette",answer:b.common,prompt:templates[i%templates.length](b),visual:b,explain:"Silhouette questions reward structure-first identification. Compare bill projection, body depth, tail, leg length and posture; only then use the habitat clue.",choices:uniqueChoices(b)});}
  return qs;
 }
 function photoQuestions(){
  const pool=birds.filter(b=>!!b.scientific);
+ const templates=[
+  "Study the photograph before looking at the choices. Which species is shown, and which single field mark would you use to defend that choice?",
+  "The photograph is your primary evidence. Which species fits the visible structure, plumage pattern and posture better than the close alternatives?",
+  "Identify the bird from the photograph. Do not choose by colour alone: which combination of bill, tail, body shape and habitat expectation supports your answer?",
+  "This is a regional identification challenge. Which species is shown? After choosing, name the closest distractor you would compare in the field.",
+  "Look for the feature that survives even if lighting or age changes the apparent colour. Which species best matches the photograph?"
+ ];
  const qs=[];
- for(let i=0;i<100;i++){
-   const b=pool[(i*11+5)%pool.length];
-   qs.push({type:"photo",answer:b.common,prompt:"Study the photograph carefully before reading the choices. Which species is shown?",visual:b,explain:"Check the bird's silhouette, bill, tail, key facial/wing marks and posture. Distractors were selected to be regionally plausible rather than random.",choices:uniqueChoices(b)});
- }
+ for(let i=0;i<100;i++){const b=pool[(i*11+5)%pool.length];qs.push({type:"photo",answer:b.common,prompt:templates[i%templates.length],visual:b,explain:"Use at least two independent clues from the photograph. The distractors are chosen from birds that can occur in Bengaluru or nearby habitats, so a single colour patch should not be enough.",choices:uniqueChoices(b)});}
  return qs;
 }
 const quizQuestions=[...fieldQuestions(),...silhouetteQuestions(),...photoQuestions()];
