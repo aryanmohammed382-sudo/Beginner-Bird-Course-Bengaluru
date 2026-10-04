@@ -545,7 +545,12 @@ async function loadPhoto(b){
   im.loading="eager";
   im.decoding="async";
   im.src=cached;
-  im.onerror=()=>{delete readPhotoCache()[b.scientific];commonsPhoto(b,holder);};
+  im.onerror=()=>{
+   const cache=readPhotoCache();
+   delete cache[b.scientific];
+   savePhotoCache(cache);
+   commonsPhoto(b,holder);
+  };
   holder.innerHTML="";holder.appendChild(im);
   return;
  }
