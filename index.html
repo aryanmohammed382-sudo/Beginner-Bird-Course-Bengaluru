@@ -339,14 +339,16 @@ const hardPairs=[
 ["Yellow-footed Green-Pigeon","Orange-breasted Green-Pigeon"],["Black Eagle","Crested Serpent-Eagle"]
 ];
 function getBird(name){return birds.find(b=>b.common===name)||birds.find(b=>b.common.toLowerCase()===name.toLowerCase())||birds[0];}
-function uniqueChoices(answer,seed,count=4){
+function uniqueChoices(answer,count=4){
+ const name=typeof answer==="string"?answer:answer.common;
+ const obj=getBird(name);
  const pool=[];
- const preferred=hardPairs.filter(p=>p.includes(answer)).flat().filter(x=>x!==answer);
+ const preferred=hardPairs.filter(p=>p.includes(name)).flat().filter(x=>x!==name);
  for(const x of preferred){if(!pool.includes(x)&&birds.some(b=>b.common===x))pool.push(x);}
- const same=birds.filter(b=>b!==answer && (b.family===answer.family||b.habitat===answer.habitat));
- for(const b of same)if(!pool.includes(b.common)&&b.common!==answer.common)pool.push(b.common);
- for(const b of birds)if(!pool.includes(b.common)&&b.common!==answer.common)pool.push(b.common);
- return [answer.common,...pool.slice(0,count-1)].sort(()=>Math.random()-.5);
+ const same=birds.filter(b=>b.common!==name && (b.family===obj.family||b.habitat===obj.habitat));
+ for(const b of same)if(!pool.includes(b.common)&&b.common!==name)pool.push(b.common);
+ for(const b of birds)if(!pool.includes(b.common)&&b.common!==name)pool.push(b.common);
+ return [name,...pool.slice(0,count-1)].sort(()=>Math.random()-.5);
 }
 function silhouetteSVG(b){
  const fam=b.family, wet=/Wetlands|Scolopacidae|Ardeidae|Recurvirostridae|Jacanidae|Laridae/.test(fam+" "+b.habitat);
@@ -362,7 +364,7 @@ function fieldQuestions(){
  const templates=[
   b=>"At "+regionTips[b.habitat]+", you get a 5–10 second view. The bird's overall build is clearer than its colour, and its feeding movement is more informative than its call. Which choice should you investigate first?",
   b=>"At "+regionTips[b.habitat]+", a bird moves through the habitat without behaving like the most obvious species you would expect there. You notice its "+(b.family==="Ardeidae"?"bill and leg proportions":b.family==="Accipitridae"||b.family==="Falconidae"?"wing shape and tail":b.family==="Muscicapidae"?"posture and perch-to-ground movement":"tail length and body shape")+". Which identification is best supported?",
-  b=>"A field note from Bengaluru reads: ""+regionTips[b.habitat]+"; brief view; bird remained "+(b.habitat==="Wetlands"?"close to the water edge":"within the vegetation/open ground")+"; size was estimated relative to a common myna; one structural feature was obvious but plumage was poorly lit." Which candidate deserves the closest comparison?",
+  b=>"A field note from Bengaluru reads: "+regionTips[b.habitat]+"; brief view; bird remained "+(b.habitat==="Wetlands"?"close to the water edge":"within the vegetation/open ground")+"; size was estimated relative to a common myna; one structural feature was obvious but plumage was poorly lit." Which candidate deserves the closest comparison?",
   b=>"You are identifying a distant bird through heat haze. Habitat narrows the list, but two choices look plausible. The deciding evidence is more likely to come from "+(b.habitat==="Wetlands"?"leg length, bill shape and feeding posture":"silhouette, tail shape and movement")+" than from fine colour. Which bird fits the combined evidence?",
   b=>"A companion calls it a familiar Bengaluru bird, but you are not convinced. Your notes say: "+regionTips[b.habitat]+"; "+(b.family==="Muscicapidae"?"frequent short flights from low perches":b.family==="Accipitridae"||b.family==="Falconidae"?"active flight with a strong, purposeful wingbeat":b.family==="Ardeidae"?"slow movement while scanning shallow water":"repeated movement between nearby feeding spots")+". Which answer is most defensible?"
  ];
