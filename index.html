@@ -556,46 +556,47 @@ function questionScenario(b,i,type){
  const place=(quizPlaces[b.habitat]||quizPlaces.Woodland)[i%6],
        time=quizTimes[Math.floor(i/6)%quizTimes.length],
        mode=quizModes[Math.floor(i/48)%quizModes.length],
-       sound=quizSound(b),v=i%12,
+       v=i%12,
        ease=i%10<4,
-       feature=oneProminentFeature(b);
+       feature=oneProminentFeature(b),
+       pair=(hardPairs.find(p=>p.includes(b.common))||[]).find(x=>x!==b.common);
 
  if(type==="field"){
   const guided=[
-   "At a "+place+" in Bengaluru, you see a bird "+mode+". One helpful feature is "+feature+". Which species is it?",
-   "During a "+time+" walk at a "+place+", a bird appears briefly. You notice "+feature+". Which species best fits?",
-   "You are birding at a "+place+". The bird is "+mode+" and you notice "+feature+". Which species would you record?"
+   "GUIDED: At a "+place+" in Bengaluru, you see a bird "+mode+". One helpful field mark is "+feature+". Which species is it?",
+   "GUIDED: During a "+time+" walk at a "+place+", a bird appears briefly. You notice "+feature+". Which species best fits?",
+   "GUIDED: You are birding at a "+place+". The bird is "+mode+" and you notice "+feature+". Which species would you record?"
   ];
   const standard=[
-   "At a "+place+" in Bengaluru, you see a bird "+mode+". You have a clear view of its general shape and behaviour. Which species is the best match?",
-   "During a "+time+" walk at a "+place+", a bird appears briefly. You can use its appearance and the way it is behaving. Which species best fits?",
-   "At a "+place+", you see a bird "+mode+". The habitat gives you context, but the bird's appearance should lead the identification. Which species is it?",
-   "A bird is feeding or resting at a "+place+". You get a reasonable view and can judge its size, shape and general pattern. Which species is the best match?",
-   "You are new to birding and see a bird at a "+place+". The view is good enough to judge its overall appearance and behaviour. Which species would you choose?"
+   "STANDARD: At a "+place+" in Bengaluru, you see a bird "+mode+". Identify it from the bird itself, using at least two clues such as shape, plumage, bill, tail or behaviour. Do not rely on habitat alone. Which species is the best match?",
+   "STANDARD: During a "+time+" walk at a "+place+", a bird appears briefly. You have no single giveaway clue, so combine its overall shape with its plumage pattern or behaviour. Which species best fits?",
+   "STANDARD: At a "+place+", you see a bird "+mode+". First make a general identification, then check a second field mark before choosing. Which species is it?",
+   "STANDARD: A bird is feeding or resting at a "+place+". Compare its size and shape with its plumage pattern and behaviour. Which species is the best match?",
+   "STANDARD: You see a bird at a "+place+". A similar-looking species may occur in the same region, so use more than one visible clue before deciding. Which species would you choose?"
   ];
   return (ease?guided:standard)[v%(ease?guided.length:standard.length)];
  }
-  const guided=[
-  "Look at the bird photograph. It was seen at a "+place+". One helpful feature is "+feature+". Which species is shown?",
-  "Study the photograph from a "+place+" observation. Notice "+feature+". Which species is it?",
-  "Identify the bird in the photograph. A useful feature to notice is "+feature+". Which species is shown?"
+ const guided=[
+  "GUIDED: Look at the bird photograph. It was seen at a "+place+". One helpful field mark is "+feature+". Which species is shown?",
+  "GUIDED: Study the photograph from a "+place+" observation. Notice "+feature+". Which species is it?",
+  "GUIDED: Identify the bird in the photograph. A useful feature to notice is "+feature+". Which species is shown?"
  ];
  const standard=[
-  "Study the bird photograph from a "+place+" observation. Start with its overall shape and plumage pattern. Which species is shown?",
-  "Look carefully at the photograph. The bird was seen at a "+place+". Use its appearance first and the habitat as supporting information. Which species is it?",
-  "Identify the bird in the photograph. Focus on its overall shape, main pattern and posture rather than tiny details. Which species is shown?",
-  "A field photographer captured this bird at a "+place+". Which species is shown? Start with the most obvious field mark and then check the rest of the bird.",
-  "Study the photograph from a "+time+" observation at a "+place+". Which species is shown? Use the bird's appearance as your main evidence."
+  "STANDARD: Study the bird photograph from a "+place+" observation. Start with overall shape, then confirm the identification using its main plumage pattern. Which species is shown?",
+  "STANDARD: Look carefully at the photograph. The bird was seen at a "+place+". Use two pieces of visual evidence—such as shape plus plumage or bill—before choosing. Which species is it?",
+  "STANDARD: Identify the bird in the photograph. Focus on overall shape, main pattern and posture, then check that they agree with one another. Which species is shown?",
+  "STANDARD: A field photographer captured this bird at a "+place+". There is no giveaway clue in the question; identify it from the photo and confirm the choice with a second field mark.",
+  "STANDARD: Study the photograph from a "+time+" observation at a "+place+". Use the bird's appearance as your main evidence and habitat only as supporting context. Which species is shown?"
  ];
  return (ease?guided:standard)[v%(ease?guided.length:standard.length)];
 }
 function buildQuestionBank(){
  return answerSequence.map((b,i)=>{
   const ease=i%10<4;
-  return {id:"q"+(i+1),type:quizTypes[i],answer:b.common,visual:b,prompt:questionScenario(b,i,quizTypes[i]),decisive:quizDecisive(b),level:ease?"guided":"beginner",
+  return {id:"q"+(i+1),type:quizTypes[i],answer:b.common,visual:b,prompt:questionScenario(b,i,quizTypes[i]),decisive:quizDecisive(b),level:ease?"guided":"standard",
    hint:ease
-    ? (quizTypes[i]==="photo"?"Use the helpful feature in the question, then check the bird's overall shape.":quizTypes[i]==="silhouette"?"Use the helpful feature first, then compare the outline.":"Start with the helpful feature, then confirm it with the bird's overall appearance.")
-    : (quizTypes[i]==="photo"?"Start with the bird's overall shape and main plumage pattern. You do not need to identify every detail.":quizTypes[i]==="silhouette"?"Use the overall outline, body shape and tail. Ignore tiny details that are hard to see.":"Start with the bird's overall appearance and behaviour. Use habitat as supporting evidence rather than trying to combine every clue.")
+    ? (quizTypes[i]==="photo"?"Use the single helpful field mark given in the question, then confirm it with the bird's overall shape.":"Start with the single helpful field mark, then confirm it with the bird's overall appearance.")
+    : (quizTypes[i]==="photo"?"Use at least two visual clues from the photograph, such as overall shape plus plumage, bill or tail. Habitat is only supporting evidence.":"Use at least two clues before choosing: start with overall shape and then confirm with plumage, bill, tail or behaviour. Habitat alone is not enough.")
   };
  });
 }
@@ -640,7 +641,7 @@ function renderQuiz(){
  const qs=activeQuizQuestions();if(quizIndex>=qs.length)quizIndex=0;
  const q=qs[quizIndex],card=document.querySelector("#quizCard");quizAnswered=false;
  const globalNumber=quizQuestions.indexOf(q)+1;
- card.innerHTML=renderSectionTabs()+'<div class="quizMeta"><span class="quizType">'+(q.type==="field"?"FIELD SCENARIO":q.type==="silhouette"?"SILHOUETTE + REGION":"PHOTO IDENTIFICATION")+'</span><span>Question '+(quizIndex+1)+' of '+qs.length+'</span><span>Bank position '+globalNumber+' / '+QUIZ_TOTAL+'</span><span>Score '+quizScore+'</span></div><div class="quizPrompt">'+esc(q.prompt)+'</div>'+(q.type==="silhouette"?'<div class="quizVisual">'+silhouetteSVG(q.visual)+'</div>':q.type==="photo"?'<div class="quizVisual" id="quizPhoto"><span>Loading the exact taxon image…</span></div>':"")+'<div class="hintBox"><button id="showHint" class="hintBtn">Show hint</button><span id="hintText" class="quizHidden">'+esc(q.hint)+'</span></div><div class="choices">'+uniqueChoices(q.answer,4,globalNumber).map((x,i)=>'<button class="choice" data-i="'+i+'">'+esc(x)+'</button>').join("")+'</div><div id="quizExplain"></div><div class="quizActions"><button id="nextQ" class="secondary" disabled>'+(quizIndex===qs.length-1?"Finish section":"Next question →")+'</button><button id="quitQ" class="secondary">Back to course</button></div>';
+ card.innerHTML=renderSectionTabs()+'<div class="quizMeta"><span class="quizType">'+(q.type==="field"?"FIELD SCENARIO":q.type==="silhouette"?"SILHOUETTE + REGION":"PHOTO IDENTIFICATION")+'</span><span>Difficulty: '+(q.level==="guided"?"Guided":"Standard")+'</span><span>Question '+(quizIndex+1)+' of '+qs.length+'</span><span>Bank position '+globalNumber+' / '+QUIZ_TOTAL+'</span><span>Score '+quizScore+'</span></div><div class="quizPrompt">'+esc(q.prompt)+'</div>'+(q.type==="silhouette"?'<div class="quizVisual">'+silhouetteSVG(q.visual)+'</div>':q.type==="photo"?'<div class="quizVisual" id="quizPhoto"><span>Loading the exact taxon image…</span></div>':"")+'<div class="hintBox"><button id="showHint" class="hintBtn">Show hint</button><span id="hintText" class="quizHidden">'+esc(q.hint)+'</span></div><div class="choices">'+uniqueChoices(q.answer,4,globalNumber).map((x,i)=>'<button class="choice" data-i="'+i+'">'+esc(x)+'</button>').join("")+'</div><div id="quizExplain"></div><div class="quizActions"><button id="nextQ" class="secondary" disabled>'+(quizIndex===qs.length-1?"Finish section":"Next question →")+'</button><button id="quitQ" class="secondary">Back to course</button></div>';
  document.querySelectorAll(".choice").forEach(btn=>btn.onclick=()=>answerQuiz(Number(btn.dataset.i)));
  document.querySelector("#showHint").onclick=()=>{document.querySelector("#hintText").classList.remove("quizHidden");document.querySelector("#showHint").disabled=true;};
  if(q.type==="photo")loadQuizPhoto(q.visual);
