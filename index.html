@@ -15,9 +15,9 @@ input,select{padding:12px;border:1px solid #cbd5cd;border-radius:9px;background:
 .coursebar{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1100px;margin:0 auto 16px;color:var(--muted);font-weight:600}.nav{display:flex;gap:8px}.nav button,.mediabtn a{border:0;border-radius:9px;padding:11px 16px;background:#236b45;color:#fff;font:inherit;text-decoration:none;cursor:pointer}.nav button:disabled{opacity:.4;cursor:not-allowed}.slide{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 5px 22px #0000000b;padding:clamp(20px,4vw,48px);max-width:1100px;margin:auto;min-height:450px}.intro{max-width:900px}.eyebrow{font-size:12px;letter-spacing:.12em;font-weight:800;color:#236b45}.slide h2{font-size:clamp(28px,4vw,42px);margin:12px 0}.subtitle{color:var(--muted);font-size:16px}.lead{font-size:20px;line-height:1.6;max-width:760px;margin:32px 0}.slide h3{margin:24px 0 8px}.slide li,.slide p{line-height:1.6}.birdlayout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,1fr);gap:30px;margin-top:22px}.photo{height:360px;background:#e7ece8;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}.photo img{width:100%;height:100%;object-fit:contain}.mediabtn{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.mediabtn a{font-size:14px}.smallnote{font-size:12px;color:var(--muted);line-height:1.45}.tag{display:inline-block;background:#e5f1e9;color:#215d3e;border-radius:999px;padding:5px 9px;font-size:12px;margin:8px 0}@media(max-width:750px){.birdlayout{grid-template-columns:1fr}.photo{height:280px}.coursebar{align-items:flex-start;flex-direction:column}.slide{min-height:0}}</style>
 <style>
 .practiceNav{background:#7a4b16!important}.quizWrap{max-width:1100px;margin:28px auto 60px}.quizCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(20px,4vw,42px);box-shadow:0 5px 22px #0000000b}.quizMeta{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:13px}.quizType{background:#f2e8d9;color:#6c461d;border-radius:999px;padding:5px 9px;font-weight:700}.quizPrompt{font-size:22px;line-height:1.5;margin:18px 0}.quizVisual{min-height:220px;background:#eef2ee;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:14px 0}.quizVisual img{max-width:100%;max-height:330px;object-fit:contain}.quizVisual svg{width:100%;height:240px}.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.choice{padding:14px;text-align:left;border:1px solid #cbd5cd;border-radius:10px;background:#fff;cursor:pointer;font:inherit}.choice:hover{border-color:#236b45}.choice.correct{background:#e3f3e8;border-color:#236b45}.choice.wrong{background:#f8e8e5;border-color:#a84d3d}.explain{margin-top:18px;padding:15px;border-radius:10px;background:#f5f7f3;line-height:1.6}.quizActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.quizActions button{border:0;border-radius:9px;padding:11px 16px;background:#236b45;color:#fff;font:inherit;cursor:pointer}.quizActions button.secondary{background:#53665a}.quizScore{font-size:28px;font-weight:800}.quizHidden{display:none}@media(max-width:700px){.choices{grid-template-columns:1fr}}
-</style></head>
+</style><style>.quizSections{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}.sectionTab{border:1px solid #cbd5cd;border-radius:999px;padding:9px 13px;background:#fff;color:#31513f;cursor:pointer;font:inherit;font-size:13px}.sectionTab.active{background:#236b45;color:#fff;border-color:#236b45}.hintBox{margin:14px 0;padding:12px 14px;background:#f2f5f1;border-radius:10px;line-height:1.5}.hintBtn{border:1px solid #9eb0a2;border-radius:8px;background:#fff;padding:8px 11px;cursor:pointer;font:inherit}.hintBtn:disabled{opacity:.5}</style></head>
 <body>
-<header><h1>Birds of Bengaluru</h1><p>A 222-species identification course focused on field marks, habitat, behaviour, comparison, photography and sound. Built for beginner-to-intermediate birders in Bengaluru and nearby habitats.</p></header>
+<header><h1>Birds of Bengaluru</h1><p>A 222-species identification course focused on field marks, habitat, behaviour, comparison, photography and sound. Built for beginner-to-intermediate birders in Bengaluru and nearby habitats. The assessment now contains 2,500 generated practice questions with balanced species coverage and switchable sections.</p></header>
 <main>
 <section class="coursebar"><div id="progress">Welcome</div><div class="nav"><button id="prev">← Previous</button><button id="next">Next →</button><button id="practiceBtn" class="practiceNav">Practice Questions</button></div></section>
 <section id="lesson" class="lesson" aria-live="polite"></section><section id="practice" class="quizWrap quizHidden"><div class="quizCard" id="quizCard"></div></section>
@@ -302,7 +302,7 @@ const intro=[
 const birds=raw;
 let slide=0;
 const total=intro.length+birds.length*2;
-function media(b){const q=encodeURIComponent(b.common+" "+b.scientific);return {photo:"https://commons.wikimedia.org/w/index.php?search="+q+"&title=Special:MediaSearch&type=image",audio:"https://www.xeno-canto.org/explore?query="+q,ml:"https://search.macaulaylibrary.org/catalog?searchField=species&view=grid"};}
+function media(b){const q=encodeURIComponent(b.common+" "+b.scientific),audioQ=encodeURIComponent(b.common);return {photo:"https://commons.wikimedia.org/w/index.php?search="+q+"&title=Special:MediaSearch&type=image",audio:"https://www.xeno-canto.org/explore?query="+audioQ,ml:"https://search.macaulaylibrary.org/catalog?searchField=species&view=grid"};}
 function current(){if(slide<intro.length)return {kind:"intro",data:intro[slide]};const n=Math.floor((slide-intro.length)/2),part=(slide-intro.length)%2;return {kind:"bird",data:birds[n],part};}
 function render(){
  const s=current(), el=document.querySelector("#lesson");
@@ -317,130 +317,129 @@ function render(){
 async function loadPhoto(b){const holder=document.querySelector("#photo");if(!holder)return;try{const wp="https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(b.scientific);const j=await fetch(wp).then(r=>r.ok?r.json():null);const img=j?.originalimage?.source||j?.thumbnail?.source;if(img&&document.querySelector("#photo")===holder){const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.src=img;im.onerror=()=>commonsPhoto(b,holder);holder.innerHTML="";holder.appendChild(im);return;}commonsPhoto(b,holder);}catch(e){commonsPhoto(b,holder);}}
 async function commonsPhoto(b,holder){try{const q=encodeURIComponent('"'+b.scientific+'"');const url="https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="+q+"&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1100&format=json&origin=*";const j=await fetch(url).then(r=>r.json());const pages=Object.values(j.query?.pages||{});const good=pages.filter(x=>{const t=(x.title||"").toLowerCase();return t.includes(b.scientific.toLowerCase())||t.includes(b.common.toLowerCase())}).find(x=>x.imageinfo?.[0]?.thumburl||x.imageinfo?.[0]?.url);if(good&&document.querySelector("#photo")===holder){const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.src=good.imageinfo[0].thumburl||good.imageinfo[0].url;holder.innerHTML="";holder.appendChild(im);}else holder.innerHTML="<span>No verified taxon image found. Use More photos to browse.</span>";}catch(e){holder.innerHTML="<span>Image could not load. Use More photos to browse.</span>";}}
 
-// ---------- 250-question field assessment ----------
-const regionTips={
-"Urban & gardens":"residential streets, apartment compounds, city parks and mature garden trees",
-"Woodland":"wooded parks, scrubby woodland edges and shaded vegetation around Bengaluru",
-"Grassland & scrub":"open scrub, grassy edges, rocky or thorny patches and dry field margins",
-"Wetlands":"lakes, tanks, marshy edges and shallow water around Bengaluru",
-"Open country":"dry open ground, fields, fallow plots and grassland",
-"Seasonal migrant":"Bengaluru wetlands, parks and open habitats during the appropriate migration season"
+
+// ---------- 2,500-question field assessment ----------
+const QUIZ_TOTAL=2500,QUIZ_COUNTS={field:500,silhouette:1000,photo:1000};
+const quizPlaces={
+"Urban & gardens":["apartment compound","city park garden","tree-lined residential road","school or university campus","quiet garden beside a busy road","large institutional grounds"],
+"Woodland":["wooded park edge","shaded grove","scrubby woodland trail","streamside vegetation","mature tree canopy","woodland clearing"],
+"Grassland & scrub":["dry scrub edge","grassy field margin","rocky scrub patch","fallow plot","thorny scrub","open grassland beside a road"],
+"Wetlands":["lake margin","shallow tank edge","marshy inlet","reed-lined shore","mudflat at a wetland","wet grassy margin"],
+"Open country":["dry field","open agricultural margin","fallow ground","rocky open patch","grassland track","open village-edge fields"],
+"Seasonal migrant":["Bengaluru lake during migration season","open winter field","park during the cooler months","wetland mudflat in the migration period","seasonal grassland","wintering habitat near a city lake"]
 };
-const hardPairs=[
-["Common Myna","Jungle Myna"],["Great Egret","Intermediate Egret"],["Little Egret","Cattle Egret"],
-["Black Kite","Brahminy Kite"],["Shikra","Black-winged Kite"],["Common Kingfisher","Stork-billed Kingfisher"],
-["Pied Kingfisher","Common Kingfisher"],["Jungle Babbler","Large Grey Babbler"],["Common Sandpiper","Green Sandpiper"],
-["Common Greenshank","Wood Sandpiper"],["Black-winged Stilt","Pied Avocet"],["Red-wattled Lapwing","Yellow-wattled Lapwing"],
-["Coppersmith Barbet","White-cheeked Barbet"],["Red-vented Bulbul","Red-whiskered Bulbul"],
-["Rose-ringed Parakeet","Alexandrine Parakeet"],["Asian Koel","Common Hawk-Cuckoo"],
-["Little Cormorant","Indian Cormorant"],["Great Cormorant","Little Cormorant"],
-["Indian Pond Heron","Cattle Egret"],["Spotted Owlet","Indian Scops-Owl"],
-["Pied Bushchat","Common Stonechat"],["White-rumped Shama","Oriental Magpie-Robin"],
-["Yellow-footed Green-Pigeon","Orange-breasted Green-Pigeon"],["Black Eagle","Crested Serpent-Eagle"]
-];
-function getBird(name){return birds.find(b=>b.common===name)||birds.find(b=>b.common.toLowerCase()===name.toLowerCase())||birds[0];}
-function uniqueChoices(answer,count=4){
- const name=typeof answer==="string"?answer:answer.common;
- const obj=getBird(name);
- const pool=[];
- const preferred=hardPairs.filter(p=>p.includes(name)).flat().filter(x=>x!==name);
- for(const x of preferred){if(!pool.includes(x)&&birds.some(b=>b.common===x))pool.push(x);}
- const same=birds.filter(b=>b.common!==name && (b.family===obj.family||b.habitat===obj.habitat));
- for(const b of same)if(!pool.includes(b.common)&&b.common!==name)pool.push(b.common);
- for(const b of birds)if(!pool.includes(b.common)&&b.common!==name)pool.push(b.common);
- return [name,...pool.slice(0,count-1)].sort(()=>Math.random()-.5);
+const quizTimes=["early morning","late morning","just before sunset","overcast afternoon","after light rain","around first light","near dusk","during a cool winter morning"];
+const quizModes=["feeding","moving between perches","scanning from a lookout","resting quietly","calling from cover","crossing open ground","foraging along the edge","flying between trees"];
+function quizSound(b){
+ const s=clues[b.common]||"";
+ if(/call|song|sing|voice|sound|whistl|mimic/i.test(s))return s.replace(/;.*$/,"");
+ return "a species-specific call heard from nearby cover";
 }
-function silhouetteSVG(b){
- const fam=b.family, wet=/Wetlands|Scolopacidae|Ardeidae|Recurvirostridae|Jacanidae|Laridae/.test(fam+" "+b.habitat);
- const raptor=/Accipitridae|Falconidae|Pandionidae/.test(fam);
- const owl=/Strigidae|Tytonidae/.test(fam);
- const parrot=/Psittaculidae/.test(fam);
- const long=wet?75:raptor?58:owl?48:parrot?62:50;
- const tail=wet?35:raptor?55:parrot?68:42;
- return '<svg viewBox="0 0 520 240" role="img" aria-label="Bird silhouette"><g fill="#26352c"><ellipse cx="250" cy="120" rx="'+long+'" ry="'+(wet?35:40)+'"/><circle cx="'+(250+long-8)+'" cy="105" r="'+(wet?18:24)+'"/><path d="M '+(210-long/2)+' 120 L '+(160-tail)+' '+(wet?150:175)+' L '+(225-long/4)+' 145 Z"/><path d="M '+(220-long/3)+' 95 Q 250 35 300 100 Q 270 85 235 115 Z"/><path d="M '+(250+long+5)+' 105 L '+(310+long/3)+' 96 L '+(250+long+8)+' 116 Z"/>'+ (wet?'<path d="M 245 145 L 235 215 L 242 215 L 254 150 Z"/><path d="M 265 145 L 278 215 L 285 215 L 275 145 Z"/>':'') +'</g></svg>';
+function quizDecisive(b){
+ return clues[b.common]||"the strongest evidence is the combination of body shape, plumage pattern, behaviour and habitat; do not rely on habitat alone";
 }
-function fieldQuestions(){
- const targets=[birds[0],birds[4],birds[5],birds[6],birds[7],birds[8],birds[9],birds[10],birds[11],birds[12],birds[13],birds[16],birds[17],birds[18],birds[20],birds[22],birds[27],birds[28],birds[30],birds[31],birds[34],birds[40],birds[41],birds[43],birds[47],birds[49],birds[54],birds[56],birds[61],birds[67],birds[72],birds[77],birds[80],birds[83],birds[88],birds[94],birds[101],birds[104],birds[108],birds[113],birds[120],birds[128],birds[135],birds[145],birds[155],birds[166],birds[181],birds[194],birds[207],birds[218]];
- const templates=[
-  b=>"At "+regionTips[b.habitat]+", you get a 5–10 second view. The bird's overall build is clearer than its colour, and its feeding movement is more informative than its call. Which choice should you investigate first?",
-  b=>"At "+regionTips[b.habitat]+", a bird moves through the habitat without behaving like the most obvious species you would expect there. You notice its "+(b.family==="Ardeidae"?"bill and leg proportions":b.family==="Accipitridae"||b.family==="Falconidae"?"wing shape and tail":b.family==="Muscicapidae"?"posture and perch-to-ground movement":"tail length and body shape")+". Which identification is best supported?",
-  b=>"A field note from Bengaluru reads: "+regionTips[b.habitat]+"; brief view; bird remained "+(b.habitat==="Wetlands"?"close to the water edge":"within the vegetation/open ground")+"; size was estimated relative to a common myna; one structural feature was obvious but plumage was poorly lit. Which candidate deserves the closest comparison?",
-  b=>"You are identifying a distant bird through heat haze. Habitat narrows the list, but two choices look plausible. The deciding evidence is more likely to come from "+(b.habitat==="Wetlands"?"leg length, bill shape and feeding posture":"silhouette, tail shape and movement")+" than from fine colour. Which bird fits the combined evidence?",
-  b=>"A companion calls it a familiar Bengaluru bird, but you are not convinced. Your notes say: "+regionTips[b.habitat]+"; "+(b.family==="Muscicapidae"?"frequent short flights from low perches":b.family==="Accipitridae"||b.family==="Falconidae"?"active flight with a strong, purposeful wingbeat":b.family==="Ardeidae"?"slow movement while scanning shallow water":"repeated movement between nearby feeding spots")+". Which answer is most defensible?"
- ];
- return targets.map((b,i)=>({type:"field",answer:b.common,prompt:templates[i%templates.length](b),explain:"Do not accept a habitat-only identification. The intended skill is combining location, body shape, movement and one dependable field mark before committing.",choices:uniqueChoices(b)}));
+function deterministicOrder(arr,seed){
+ return arr.map((v,i)=>({v,k:(i*37+seed*101)%997})).sort((a,b)=>a.k-b.k).map(x=>x.v);
 }
-function silhouetteQuestions(){
- const pool=birds.filter(b=>["Wetlands","Open country","Grassland & scrub","Seasonal migrant","Woodland"].includes(b.habitat));
- const templates=[
-  b=>"The silhouette is intentionally missing plumage detail. In "+regionTips[b.habitat]+", which candidate best fits the body proportions shown? Treat the habitat as a filter, not proof.",
-  b=>"From a backlit view you can only judge outline, bill projection and leg length. The setting is "+regionTips[b.habitat]+". Which species should you compare first?",
-  b=>"A distant bird is reduced to a dark outline. It is roughly the size implied by the silhouette and is using "+regionTips[b.habitat]+". Which option is the strongest structural match?",
-  b=>"Ignore colour completely. Use the outline, posture and the Bengaluru setting—"+regionTips[b.habitat]+"—to choose the best candidate. Which distractor would you want to rule out next?",
-  b=>"The bird is partly obscured, so only silhouette and habitat survive. The habitat is "+regionTips[b.habitat]+". Which identification is most consistent with the shape before any plumage clues are added?"
- ];
- const qs=[];
- for(let i=0;i<100;i++){const b=pool[(i*7+13)%pool.length];qs.push({type:"silhouette",answer:b.common,prompt:templates[i%templates.length](b),visual:b,explain:"Silhouette questions reward structure-first identification. Compare bill projection, body depth, tail, leg length and posture; only then use the habitat clue.",choices:uniqueChoices(b)});}
- return qs;
-}
-function photoQuestions(){
- const pool=birds.filter(b=>!!b.scientific);
- const templates=[
-  "Study the photograph before looking at the choices. Which species is shown, and which single field mark would you use to defend that choice?",
-  "The photograph is your primary evidence. Which species fits the visible structure, plumage pattern and posture better than the close alternatives?",
-  "Identify the bird from the photograph. Do not choose by colour alone: which combination of bill, tail, body shape and habitat expectation supports your answer?",
-  "This is a regional identification challenge. Which species is shown? After choosing, name the closest distractor you would compare in the field.",
-  "Look for the feature that survives even if lighting or age changes the apparent colour. Which species best matches the photograph?"
- ];
- const qs=[];
- for(let i=0;i<100;i++){const b=pool[(i*11+5)%pool.length];qs.push({type:"photo",answer:b.common,prompt:templates[i%templates.length],visual:b,explain:"Use at least two independent clues from the photograph. The distractors are chosen from birds that can occur in Bengaluru or nearby habitats, so a single colour patch should not be enough.",choices:uniqueChoices(b)});}
- return qs;
-}
-let quizQuestions=[], quizIndex=0,quizScore=0,quizAnswered=false;
-function initQuiz(){
- try{
-  quizQuestions=[...fieldQuestions(),...silhouetteQuestions(),...photoQuestions()];
-  if(quizQuestions.length!==250) throw new Error("Expected 250 questions");
-  return true;
- }catch(e){
-  console.error(e);
-  return false;
+function buildAnswerSequence(){
+ const seq=[];
+ for(let pass=0;pass<5;pass++)seq.push(...deterministicOrder(birds,(pass+1)*17));
+ let i=0;
+ while(seq.length<QUIZ_TOTAL){
+  const b=birds[(i*37+11)%birds.length];
+  if(seq[seq.length-1]?.common!==b.common)seq.push(b);
+  i++;
  }
+ for(let n=1;n<seq.length;n++){
+  if(seq[n].common===seq[n-1].common){
+   for(let j=n+1;j<seq.length;j++){
+    if(seq[j].common!==seq[n].common&&seq[j].common!==seq[n-1].common){[seq[n],seq[j]]=[seq[j],seq[n]];break;}
+   }
+  }
+ }
+ return seq;
 }
-function quizTypeLabel(q){return q.type==="field"?"50 REAL-LIFE FIELD SCENARIOS":q.type==="silhouette"?"100 SILHOUETTE + REGION":"100 PHOTO IDENTIFICATIONS";}
+const answerSequence=buildAnswerSequence();
+const quizTypes=answerSequence.map((_,i)=>i<500?"field":i<1500?"silhouette":"photo");
+function questionScenario(b,i,type){
+ const place=(quizPlaces[b.habitat]||quizPlaces.Woodland)[i%6],time=quizTimes[Math.floor(i/6)%quizTimes.length],mode=quizModes[Math.floor(i/48)%quizModes.length],sound=quizSound(b),v=i%12;
+ if(type==="field"){
+  const a=[
+   "At a "+place+" in Bengaluru, at "+time+", you see a bird "+mode+". You note its "+(b.family==="Ardeidae"?"bill and leg proportions":b.family==="Accipitridae"||b.family==="Falconidae"?"wing shape and tail":b.family==="Muscicapidae"?"posture and perch-to-ground movement":"body shape and tail")+". A nearby recording is described as "+sound+". Which species is the best-supported identification?",
+   "A birder records a short encounter at a "+place+". The bird is "+mode+", and the view is brief enough that colour is partly unreliable. The field notes emphasize structure, behaviour and the setting. A recording later captures "+sound+". Which candidate should be identified?",
+   "During a "+time+" walk at a "+place+", a bird appears for several seconds. You compare size, silhouette, visible plumage pattern and behaviour before checking sound. The sound note is: "+sound+". Which species best fits the complete set of evidence?",
+   "At a "+place+", similar-looking birds have caused confusion before. This individual is "+mode+"; habitat is only supporting evidence. You also hear "+sound+". Which species is the strongest match?",
+   "Your field notebook says: "+time+"; "+place+"; bird "+mode+"; brief view; sound described as "+sound+". Which identification is most defensible after combining independent clues rather than choosing from habitat alone?",
+   "A beginner suggests a familiar species after seeing a bird at a "+place+". You slow down and compare shape, plumage pattern, behaviour and the recording, which contains "+sound+". Which species best survives that comparison?"
+  ]; return a[v%a.length];
+ }
+ if(type==="silhouette"){
+  const a=[
+   "From a backlit silhouette at a "+place+", you can judge only body depth, bill projection, tail and leg length. The bird is "+mode+". Which species is the strongest structural match?",
+   "A distant bird at a "+place+" is reduced to an outline. The observer notes a "+(b.family==="Ardeidae"?"long-legged, long-necked":"compact, medium-bodied")+" shape and a "+mode+" posture. Which species should be compared first?",
+   "Heat haze removes most plumage detail at a "+place+". You can still see the bird's proportions and movement while it is "+mode+". Which identification is most consistent with the silhouette?",
+   "Only the outline survives in this observation at a "+place+". Ignore colour and use bill, tail, body and leg proportions plus behaviour. Which bird best fits?",
+   "A bird crosses the sky or vegetation at a "+place+". Its silhouette is clear for a moment while it is "+mode+". Which candidate fits the structure without depending on a single colour patch?",
+   "The photograph is intentionally treated as a silhouette at a "+place+". You can use posture, proportions and movement, but not fine plumage. Which species is the best match?"
+  ]; return a[v%a.length];
+ }
+ const a=[
+  "Study the taxon photograph carefully. The encounter is framed as a "+time+" observation at a "+place+". Which species is shown? Defend the identification with at least two visible features rather than colour alone.",
+  "This photograph comes from a "+place+" scenario. Which species is shown? Look first at structure and pattern, then use the habitat context as supporting evidence.",
+  "Identify the bird in the photograph. The bird is shown "+mode+" at a "+place+"; which visible combination of shape, plumage pattern and posture supports the identification?",
+  "Use the photograph as the primary evidence. The observation occurred at a "+place+" and the bird was "+mode+". Which species is the best match, and what feature would you use to reject the closest distractor?",
+  "A field photographer captured this bird during a "+time+" visit to a "+place+". Which species is shown? Do not let a generic colour resemblance outweigh structure and pattern.",
+  "The image is paired with a sound note for context: "+sound+". Use the photograph to make the identification, then use the sound only as supporting evidence. Which species is shown?"
+ ]; return a[v%a.length];
+}
+function buildQuestionBank(){
+ return answerSequence.map((b,i)=>({id:"q"+(i+1),type:quizTypes[i],answer:b.common,visual:b,prompt:questionScenario(b,i,quizTypes[i]),decisive:quizDecisive(b),hint:quizTypes[i]==="photo"?"Start with silhouette and pattern before using colour or habitat; compare the closest two options directly.":quizTypes[i]==="silhouette"?"Compare bill projection, body depth, tail shape, leg length and posture before using habitat.":"Use at least two independent clues. Sound and habitat should support a visible structural or plumage clue, not replace it."}));
+}
+let quizQuestions=[],quizSection="all",quizIndex=0,quizScore=0,quizAnswered=false,quizBankReady=false;
+const quizSectionLabels={all:"All 2,500",field:"Field scenarios · 500",silhouette:"Silhouette + region · 1,000",photo:"Photo identifications · 1,000"};
+function ensureQuizBank(){if(!quizBankReady){quizQuestions=buildQuestionBank();quizBankReady=true;}return quizQuestions;}
+function activeQuizQuestions(){const bank=ensureQuizBank();return quizSection==="all"?bank:bank.filter(q=>q.type===quizSection);}
+function uniqueChoices(answer,count=4,seed=0){
+ const name=typeof answer==="string"?answer:answer.common,obj=getBird(name),pool=[],preferred=hardPairs.filter(p=>p.includes(name)).flat().filter(x=>x!==name);
+ for(const x of preferred)if(!pool.includes(x)&&birds.some(b=>b.common===x))pool.push(x);
+ const nearby=birds.filter(b=>b.common!==name&&(b.family===obj.family||b.habitat===obj.habitat));
+ for(const b of deterministicOrder(nearby,seed+13))if(!pool.includes(b.common))pool.push(b.common);
+ for(const b of deterministicOrder(birds,seed+29))if(!pool.includes(b.common)&&b.common!==name)pool.push(b.common);
+ return deterministicOrder([name,...pool.slice(0,count-1)],seed+7);
+}
+function renderSectionTabs(){
+ return '<div class="quizSections">'+Object.entries(quizSectionLabels).map(([k,v])=>'<button class="sectionTab '+(quizSection===k?"active":"")+'" data-section="'+k+'">'+v+'</button>').join("")+'</div>';
+}
 function renderQuiz(){
- const q=quizQuestions[quizIndex], card=document.querySelector("#quizCard");
- quizAnswered=false;
- card.innerHTML='<div class="quizMeta"><span class="quizType">'+quizTypeLabel(q)+'</span><span>Question '+(quizIndex+1)+' of 250</span><span>Score '+quizScore+'</span></div>'+
- '<div class="quizPrompt">'+esc(q.prompt)+'</div>'+
- (q.type==="silhouette"?'<div class="quizVisual">'+silhouetteSVG(q.visual)+'</div>':q.type==="photo"?'<div class="quizVisual" id="quizPhoto"><span>Loading an exact taxon image…</span></div>':'')+
- '<div class="choices">'+q.choices.map((x,i)=>'<button class="choice" data-i="'+i+'">'+esc(x)+'</button>').join("")+'</div>'+
- '<div id="quizExplain"></div><div class="quizActions"><button id="nextQ" class="secondary" disabled>'+ (quizIndex===249?"Finish assessment":"Next question →") +'</button><button id="quitQ" class="secondary">Back to course</button></div>';
+ const qs=activeQuizQuestions();if(quizIndex>=qs.length)quizIndex=0;
+ const q=qs[quizIndex],card=document.querySelector("#quizCard");quizAnswered=false;
+ const globalNumber=quizQuestions.indexOf(q)+1;
+ card.innerHTML=renderSectionTabs()+'<div class="quizMeta"><span class="quizType">'+(q.type==="field"?"FIELD SCENARIO":q.type==="silhouette"?"SILHOUETTE + REGION":"PHOTO IDENTIFICATION")+'</span><span>Question '+(quizIndex+1)+' of '+qs.length+'</span><span>Bank position '+globalNumber+' / '+QUIZ_TOTAL+'</span><span>Score '+quizScore+'</span></div><div class="quizPrompt">'+esc(q.prompt)+'</div>'+(q.type==="silhouette"?'<div class="quizVisual">'+silhouetteSVG(q.visual)+'</div>':q.type==="photo"?'<div class="quizVisual" id="quizPhoto"><span>Loading the exact taxon image…</span></div>':"")+'<div class="hintBox"><button id="showHint" class="hintBtn">Show hint</button><span id="hintText" class="quizHidden">'+esc(q.hint)+'</span></div><div class="choices">'+uniqueChoices(q.answer,4,globalNumber).map((x,i)=>'<button class="choice" data-i="'+i+'">'+esc(x)+'</button>').join("")+'</div><div id="quizExplain"></div><div class="quizActions"><button id="nextQ" class="secondary" disabled>'+(quizIndex===qs.length-1?"Finish section":"Next question →")+'</button><button id="quitQ" class="secondary">Back to course</button></div>';
  document.querySelectorAll(".choice").forEach(btn=>btn.onclick=()=>answerQuiz(Number(btn.dataset.i)));
+ document.querySelector("#showHint").onclick=()=>{document.querySelector("#hintText").classList.remove("quizHidden");document.querySelector("#showHint").disabled=true;};
  if(q.type==="photo")loadQuizPhoto(q.visual);
- document.querySelector("#nextQ").onclick=()=>{if(!quizAnswered)return;if(quizIndex<249){quizIndex++;renderQuiz();}else finishQuiz();};
+ document.querySelector("#nextQ").onclick=()=>{if(!quizAnswered)return;if(quizIndex<qs.length-1){quizIndex++;renderQuiz();}else finishSection();};
  document.querySelector("#quitQ").onclick=()=>{document.querySelector("#practice").classList.add("quizHidden");document.querySelector("#lesson").scrollIntoView({behavior:"smooth"});};
+ document.querySelectorAll(".sectionTab").forEach(btn=>btn.onclick=()=>switchQuizSection(btn.dataset.section));
 }
-async function loadQuizPhoto(b){
- const h=document.querySelector("#quizPhoto");if(!h)return;
- try{const j=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(b.scientific)).then(r=>r.ok?r.json():null);const img=j?.originalimage?.source||j?.thumbnail?.source;
- if(img&&document.querySelector("#quizPhoto")===h){const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.src=img;im.onerror=()=>h.innerHTML="<span>Exact image unavailable for this question.</span>";h.innerHTML="";h.appendChild(im);}
- else h.innerHTML="<span>Exact taxon image unavailable.</span>";}catch(e){h.innerHTML="<span>Image unavailable; use the field-mark choices.</span>";}
-}
+function switchQuizSection(section){quizSection=section;quizIndex=0;renderQuiz();}
 function answerQuiz(i){
- if(quizAnswered)return;quizAnswered=true;const q=quizQuestions[quizIndex], chosen=q.choices[i], ok=chosen===q.answer;if(ok)quizScore++;
- document.querySelectorAll(".choice").forEach((b,n)=>{const val=q.choices[n];if(val===q.answer)b.classList.add("correct");else if(n===i)b.classList.add("wrong");b.disabled=true;});
- document.querySelector("#quizExplain").innerHTML='<div class="explain"><strong>'+ (ok?"Correct.":"Not quite.")+'</strong> '+esc(q.explain)+'<br><br><strong>Answer:</strong> '+esc(q.answer)+'.</div>';
+ if(quizAnswered)return;quizAnswered=true;const q=activeQuizQuestions()[quizIndex],chosen=document.querySelectorAll(".choice")[i].textContent,ok=chosen===q.answer;if(ok)quizScore++;
+ document.querySelectorAll(".choice").forEach((b,n)=>{if(b.textContent===q.answer)b.classList.add("correct");else if(n===i)b.classList.add("wrong");b.disabled=true;});
+ document.querySelector("#quizExplain").innerHTML='<div class="explain"><strong>'+(ok?"Correct.":"Not quite.")+'</strong> <strong>Answer:</strong> '+esc(q.answer)+'.<br><br><strong>Decisive clue:</strong> '+esc(q.decisive)+'.</div>';
  document.querySelector("#nextQ").disabled=false;
 }
-function finishQuiz(){
- const pct=Math.round(quizScore/250*100);
- document.querySelector("#quizCard").innerHTML='<div class="quizMeta"><span class="quizType">ASSESSMENT COMPLETE</span></div><p class="quizScore">'+quizScore+' / 250 ('+pct+'%)</p><p>You completed all 250 questions. A strong score should come from distinguishing close regional alternatives, not memorising obvious colour labels.</p><div class="quizActions"><button id="retryQuiz">Restart Practice Questions</button><button id="backCourse">Back to course</button></div>';
- document.querySelector("#retryQuiz").onclick=()=>{quizIndex=0;quizScore=0;renderQuiz();};
+function finishSection(){
+ document.querySelector("#quizCard").innerHTML=renderSectionTabs()+'<div class="quizMeta"><span class="quizType">SECTION COMPLETE</span></div><p class="quizScore">'+quizScore+' correct so far</p><p>You completed the '+esc(quizSectionLabels[quizSection])+' section. Use Reattempt to clear this attempt and start the quiz again with a fresh question order.</p><div class="quizActions"><button id="nextSection">Next section</button><button id="retryQuiz" class="secondary">Reattempt quiz</button><button id="backCourse" class="secondary">Back to course</button></div>';
+ document.querySelectorAll(".sectionTab").forEach(btn=>btn.onclick=()=>switchQuizSection(btn.dataset.section));
+ document.querySelector("#retryQuiz").onclick=()=>reattemptQuiz();
+ document.querySelector("#nextSection").onclick=()=>{const order=["all","field","silhouette","photo"],n=order[(order.indexOf(quizSection)+1)%order.length];switchQuizSection(n);};
  document.querySelector("#backCourse").onclick=()=>{document.querySelector("#practice").classList.add("quizHidden");document.querySelector("#lesson").scrollIntoView({behavior:"smooth"});};
 }
-function startQuiz(){if(!initQuiz())return;document.querySelector("#practice").classList.remove("quizHidden");renderQuiz();document.querySelector("#practice").scrollIntoView({behavior:"smooth"});}
+function reattemptQuiz(){quizSection="all";quizIndex=0;quizScore=0;quizAnswered=false;quizBankReady=false;ensureQuizBank();renderQuiz();document.querySelector("#practice").scrollIntoView({behavior:"smooth"});}
+function startQuiz(){ensureQuizBank();quizSection="all";quizIndex=0;quizScore=0;quizAnswered=false;document.querySelector("#practice").classList.remove("quizHidden");renderQuiz();document.querySelector("#practice").scrollIntoView({behavior:"smooth"});}
 document.querySelector("#practiceBtn").onclick=startQuiz;
+
 
 document.querySelector("#prev").onclick=()=>{slide=Math.max(0,slide-1);render();};
 document.querySelector("#next").onclick=()=>{slide=Math.min(total-1,slide+1);render();};
