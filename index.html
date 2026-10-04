@@ -13,12 +13,14 @@ input,select{padding:12px;border:1px solid #cbd5cd;border-radius:9px;background:
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;overflow:hidden;box-shadow:0 2px 10px #0000000b}.photo{height:220px;background:#e7ece8;display:flex;align-items:center;justify-content:center}.photo img{width:100%;height:100%;object-fit:cover}.photo span{color:var(--muted);padding:20px;text-align:center}.body{padding:17px}.body h2{font-size:21px;margin:0 0 4px}.sci{font-style:italic;color:var(--muted);font-size:14px}.tag{display:inline-block;background:#e5f1e9;color:#215d3e;border-radius:999px;padding:4px 8px;font-size:12px;margin:9px 4px 9px 0}.fact{margin:8px 0;font-size:14px;line-height:1.45}.fact b{color:#31513f}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions a{color:#fff;background:#236b45;text-decoration:none;padding:9px 11px;border-radius:8px;font-size:13px}.actions a.secondary{background:#53665a}.sources{margin-top:30px;padding:18px;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--muted);line-height:1.6}
 @media(max-width:700px){.controls{grid-template-columns:1fr;position:static}.grid{grid-template-columns:1fr}}
 .coursebar{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1100px;margin:0 auto 16px;color:var(--muted);font-weight:600}.nav{display:flex;gap:8px}.nav button,.mediabtn a{border:0;border-radius:9px;padding:11px 16px;background:#236b45;color:#fff;font:inherit;text-decoration:none;cursor:pointer}.nav button:disabled{opacity:.4;cursor:not-allowed}.slide{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 5px 22px #0000000b;padding:clamp(20px,4vw,48px);max-width:1100px;margin:auto;min-height:450px}.intro{max-width:900px}.eyebrow{font-size:12px;letter-spacing:.12em;font-weight:800;color:#236b45}.slide h2{font-size:clamp(28px,4vw,42px);margin:12px 0}.subtitle{color:var(--muted);font-size:16px}.lead{font-size:20px;line-height:1.6;max-width:760px;margin:32px 0}.slide h3{margin:24px 0 8px}.slide li,.slide p{line-height:1.6}.birdlayout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,1fr);gap:30px;margin-top:22px}.photo{height:360px;background:#e7ece8;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}.photo img{width:100%;height:100%;object-fit:contain}.mediabtn{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.mediabtn a{font-size:14px}.smallnote{font-size:12px;color:var(--muted);line-height:1.45}.tag{display:inline-block;background:#e5f1e9;color:#215d3e;border-radius:999px;padding:5px 9px;font-size:12px;margin:8px 0}@media(max-width:750px){.birdlayout{grid-template-columns:1fr}.photo{height:280px}.coursebar{align-items:flex-start;flex-direction:column}.slide{min-height:0}}</style>
-</head>
+<style>
+.practiceNav{background:#7a4b16!important}.quizWrap{max-width:1100px;margin:28px auto 60px}.quizCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(20px,4vw,42px);box-shadow:0 5px 22px #0000000b}.quizMeta{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:13px}.quizType{background:#f2e8d9;color:#6c461d;border-radius:999px;padding:5px 9px;font-weight:700}.quizPrompt{font-size:22px;line-height:1.5;margin:18px 0}.quizVisual{min-height:220px;background:#eef2ee;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:14px 0}.quizVisual img{max-width:100%;max-height:330px;object-fit:contain}.quizVisual svg{width:100%;height:240px}.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.choice{padding:14px;text-align:left;border:1px solid #cbd5cd;border-radius:10px;background:#fff;cursor:pointer;font:inherit}.choice:hover{border-color:#236b45}.choice.correct{background:#e3f3e8;border-color:#236b45}.choice.wrong{background:#f8e8e5;border-color:#a84d3d}.explain{margin-top:18px;padding:15px;border-radius:10px;background:#f5f7f3;line-height:1.6}.quizActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.quizActions button{border:0;border-radius:9px;padding:11px 16px;background:#236b45;color:#fff;font:inherit;cursor:pointer}.quizActions button.secondary{background:#53665a}.quizScore{font-size:28px;font-weight:800}.quizHidden{display:none}@media(max-width:700px){.choices{grid-template-columns:1fr}}
+</style></head>
 <body>
 <header><h1>Birds of Bengaluru</h1><p>A 222-species identification course focused on field marks, habitat, behaviour, comparison, photography and sound. Built for beginner-to-intermediate birders in Bengaluru and nearby habitats.</p></header>
 <main>
-<section class="coursebar"><div id="progress">Welcome</div><div class="nav"><button id="prev">← Previous</button><button id="next">Next →</button></div></section>
-<section id="lesson" class="lesson" aria-live="polite"></section>
+<section class="coursebar"><div id="progress">Welcome</div><div class="nav"><button id="prev">← Previous</button><button id="next">Next →</button><button id="practiceBtn" class="practiceNav">Practice 250</button></div></section>
+<section id="lesson" class="lesson" aria-live="polite"></section><section id="practice" class="quizWrap quizHidden"><div class="quizCard" id="quizCard"></div></section>
 <script>
 const raw = `
 House Crow|Corvus splendens|Corvidae|Urban & gardens
@@ -312,7 +314,115 @@ function render(){
  el.innerHTML='<div class="slide birdslide"><div class="eyebrow">BIRD '+b.id+' OF '+birds.length+' • SLIDE '+(s.part+1)+' OF 2</div><div class="birdlayout"><div class="visual"><div class="photo" id="photo"><span>Finding a photograph…</span></div><div class="mediabtn"><a target="_blank" rel="noopener" href="'+links.photo+'">More photos</a><a target="_blank" rel="noopener" href="'+links.audio+'">Listen to recordings</a></div><p class="smallnote">Media opens from Wikimedia Commons / Xeno-canto. Check the recording or photo page for the exact species, location and licence.</p></div><div class="lessontext"><h2>'+esc(b.common)+'</h2><p class="subtitle"><i>'+esc(b.scientific)+'</i> · '+esc(b.family)+'</p><span class="tag">'+esc(b.habitat)+'</span>'+(first?'<h3>Meet the bird</h3><p>'+esc(clue)+'</p><h3>What to notice</h3><ul><li>Overall size and body shape</li><li>Bill, tail and posture</li><li>Where it is feeding or resting</li></ul><h3>Sound</h3><p>Listen for its repeated call or song. Notice the rhythm and pitch, then compare more than one recording.</p>':'<h3>Recognize it in the field</h3><p>'+esc(clue)+'</p><h3>Food, behaviour and nesting</h3><p>Watch where it searches for food and how it moves. Many birds feed, nest and display differently across seasons; avoid assuming one behaviour applies to every individual or site.</p><h3>How to tell it apart</h3><ul><li>Compare its silhouette and most distinctive visible mark with similar birds.</li><li>Use habitat and behaviour as extra clues, not as the only evidence.</li><li>Check the sound and regional photos if the view was brief or distant.</li></ul>')+'</div></div></div>';
  loadPhoto(b);
 }
-async function loadPhoto(b){const holder=document.querySelector("#photo");if(!holder)return;const q=encodeURIComponent(b.common+" "+b.scientific);try{const url="https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="+q+"&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url&iiurlwidth=1100&format=json&origin=*";const j=await fetch(url).then(r=>r.json());const pages=Object.values(j.query?.pages||{});const p=pages.find(x=>x.imageinfo?.[0]?.thumburl||x.imageinfo?.[0]?.url);if(p&&document.querySelector("#photo")===holder){const im=document.createElement("img");im.alt=b.common+" photograph";im.src=p.imageinfo[0].thumburl||p.imageinfo[0].url;im.onerror=()=>holder.innerHTML="<span>Photo unavailable. Use More photos to browse.</span>";holder.innerHTML="";holder.appendChild(im);}else holder.innerHTML="<span>No image returned. Use More photos to browse.</span>";}catch(e){holder.innerHTML="<span>Image could not load. Use More photos to browse.</span>";}}
+async function loadPhoto(b){const holder=document.querySelector("#photo");if(!holder)return;try{const wp="https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(b.scientific);const j=await fetch(wp).then(r=>r.ok?r.json():null);const img=j?.originalimage?.source||j?.thumbnail?.source;if(img&&document.querySelector("#photo")===holder){const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.src=img;im.onerror=()=>commonsPhoto(b,holder);holder.innerHTML="";holder.appendChild(im);return;}commonsPhoto(b,holder);}catch(e){commonsPhoto(b,holder);}}
+async function commonsPhoto(b,holder){try{const q=encodeURIComponent('"'+b.scientific+'"');const url="https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="+q+"&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1100&format=json&origin=*";const j=await fetch(url).then(r=>r.json());const pages=Object.values(j.query?.pages||{});const good=pages.filter(x=>{const t=(x.title||"").toLowerCase();return t.includes(b.scientific.toLowerCase())||t.includes(b.common.toLowerCase())}).find(x=>x.imageinfo?.[0]?.thumburl||x.imageinfo?.[0]?.url);if(good&&document.querySelector("#photo")===holder){const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.src=good.imageinfo[0].thumburl||good.imageinfo[0].url;holder.innerHTML="";holder.appendChild(im);}else holder.innerHTML="<span>No verified taxon image found. Use More photos to browse.</span>";}catch(e){holder.innerHTML="<span>Image could not load. Use More photos to browse.</span>";}}
+
+// ---------- 250-question field assessment ----------
+const regionTips={
+"Urban & gardens":"residential streets, apartment compounds, city parks and mature garden trees",
+"Woodland":"wooded parks, scrubby woodland edges and shaded vegetation around Bengaluru",
+"Grassland & scrub":"open scrub, grassy edges, rocky or thorny patches and dry field margins",
+"Wetlands":"lakes, tanks, marshy edges and shallow water around Bengaluru",
+"Open country":"dry open ground, fields, fallow plots and grassland",
+"Seasonal migrant":"Bengaluru wetlands, parks and open habitats during the appropriate migration season"
+};
+const hardPairs=[
+["Common Myna","Jungle Myna"],["Great Egret","Intermediate Egret"],["Little Egret","Cattle Egret"],
+["Black Kite","Brahminy Kite"],["Shikra","Black-winged Kite"],["Common Kingfisher","Stork-billed Kingfisher"],
+["Pied Kingfisher","Common Kingfisher"],["Jungle Babbler","Large Grey Babbler"],["Common Sandpiper","Green Sandpiper"],
+["Common Greenshank","Wood Sandpiper"],["Black-winged Stilt","Pied Avocet"],["Red-wattled Lapwing","Yellow-wattled Lapwing"],
+["Coppersmith Barbet","White-cheeked Barbet"],["Red-vented Bulbul","Red-whiskered Bulbul"],
+["Rose-ringed Parakeet","Alexandrine Parakeet"],["Asian Koel","Common Hawk-Cuckoo"],
+["Little Cormorant","Indian Cormorant"],["Great Cormorant","Little Cormorant"],
+["Indian Pond Heron","Cattle Egret"],["Spotted Owlet","Indian Scops-Owl"],
+["Pied Bushchat","Common Stonechat"],["White-rumped Shama","Oriental Magpie-Robin"],
+["Yellow-footed Green-Pigeon","Orange-breasted Green-Pigeon"],["Black Eagle","Crested Serpent-Eagle"]
+];
+function getBird(name){return birds.find(b=>b.common===name)||birds.find(b=>b.common.toLowerCase()===name.toLowerCase())||birds[0];}
+function uniqueChoices(answer,seed,count=4){
+ const pool=[];
+ const preferred=hardPairs.filter(p=>p.includes(answer)).flat().filter(x=>x!==answer);
+ for(const x of preferred){if(!pool.includes(x)&&birds.some(b=>b.common===x))pool.push(x);}
+ const same=birds.filter(b=>b!==answer && (b.family===answer.family||b.habitat===answer.habitat));
+ for(const b of same)if(!pool.includes(b.common)&&b.common!==answer.common)pool.push(b.common);
+ for(const b of birds)if(!pool.includes(b.common)&&b.common!==answer.common)pool.push(b.common);
+ return [answer.common,...pool.slice(0,count-1)].sort(()=>Math.random()-.5);
+}
+function silhouetteSVG(b){
+ const fam=b.family, wet=/Wetlands|Scolopacidae|Ardeidae|Recurvirostridae|Jacanidae|Laridae/.test(fam+" "+b.habitat);
+ const raptor=/Accipitridae|Falconidae|Pandionidae/.test(fam);
+ const owl=/Strigidae|Tytonidae/.test(fam);
+ const parrot=/Psittaculidae/.test(fam);
+ const long=wet?75:raptor?58:owl?48:parrot?62:50;
+ const tail=wet?35:raptor?55:parrot?68:42;
+ return '<svg viewBox="0 0 520 240" role="img" aria-label="Bird silhouette"><g fill="#26352c"><ellipse cx="250" cy="120" rx="'+long+'" ry="'+(wet?35:40)+'"/><circle cx="'+(250+long-8)+'" cy="105" r="'+(wet?18:24)+'"/><path d="M '+(210-long/2)+' 120 L '+(160-tail)+' '+(wet?150:175)+' L '+(225-long/4)+' 145 Z"/><path d="M '+(220-long/3)+' 95 Q 250 35 300 100 Q 270 85 235 115 Z"/><path d="M '+(250+long+5)+' 105 L '+(310+long/3)+' 96 L '+(250+long+8)+' 116 Z"/>'+ (wet?'<path d="M 245 145 L 235 215 L 242 215 L 254 150 Z"/><path d="M 265 145 L 278 215 L 285 215 L 275 145 Z"/>':'') +'</g></svg>';
+}
+function fieldQuestions(){
+ const targets=[birds[0],birds[4],birds[5],birds[6],birds[7],birds[8],birds[9],birds[10],birds[11],birds[12],birds[13],birds[16],birds[17],birds[18],birds[20],birds[22],birds[27],birds[28],birds[30],birds[31],birds[34],birds[40],birds[41],birds[43],birds[47],birds[49],birds[54],birds[56],birds[61],birds[67],birds[72],birds[77],birds[80],birds[83],birds[88],birds[94],birds[101],birds[104],birds[108],birds[113],birds[120],birds[128],birds[135],birds[145],birds[155],birds[166],birds[181],birds[194],birds[207],birds[218]];
+ const templates=[
+  b=>({prompt:"At "+regionTips[b.habitat]+", you notice a bird that "+(clues[b.common]||"moves in a characteristic way and shows a distinctive bill/tail combination")+" . The view lasts only a few seconds. Which identification best fits?",ex:"The useful combination is the bird's structure plus behaviour; habitat alone would be too weak."}),
+  b=>({prompt:"You are watching "+regionTips[b.habitat]+". The bird stays low and keeps "+(b.family==="Muscicapidae"?"making short sallies from a perch":"moving between feeding spots")+" rather than behaving like a typical open-country bird. Which species from the choices deserves the closest check?",ex:"Use the whole observation: structure, movement, microhabitat and the strongest field mark."}),
+  b=>({prompt:"A birder reports: ""+(clues[b.common]||"The bird had a distinctive silhouette, bill and feeding behaviour.")+"". Which species should you test first, and what would you compare before confirming it?",ex:"A strong field identification is a hypothesis to test against close alternatives, not a guess from one colour."}),
+  b=>({prompt:"Near Bengaluru, you get an incomplete view: the bird's "+(b.habitat==="Wetlands"?"legs/bill and feeding posture":"tail, posture and flight style")+" are clearer than its colours. Which species is the best match?",ex:"When colour is unreliable because of distance or light, shape and behaviour become more valuable."})
+ ];
+ return targets.map((b,i)=>{const t=templates[i%templates.length](b);return {type:"field",answer:b.common,prompt:t.prompt,explain:t.ex,choices:uniqueChoices(b)}});
+}
+function silhouetteQuestions(){
+ const pool=birds.filter(b=>["Wetlands","Open country","Grassland & scrub","Seasonal migrant","Woodland"].includes(b.habitat));
+ const qs=[];
+ for(let i=0;i<100;i++){
+   const b=pool[(i*7+13)%pool.length];
+   qs.push({type:"silhouette",answer:b.common,prompt:"The silhouette is intentionally stripped of plumage detail. Combine it with this Bengaluru context: "+regionTips[b.habitat]+". Which species is the strongest candidate?",visual:b,explain:"The exercise is designed to force structure-first identification. After choosing, compare bill size, tail, leg length, posture and the habitat clue." ,choices:uniqueChoices(b)});
+ }
+ return qs;
+}
+function photoQuestions(){
+ const pool=birds.filter(b=>!!b.scientific);
+ const qs=[];
+ for(let i=0;i<100;i++){
+   const b=pool[(i*11+5)%pool.length];
+   qs.push({type:"photo",answer:b.common,prompt:"Study the photograph carefully before reading the choices. Which species is shown?",visual:b,explain:"Check the bird's silhouette, bill, tail, key facial/wing marks and posture. Distractors were selected to be regionally plausible rather than random.",choices:uniqueChoices(b)});
+ }
+ return qs;
+}
+const quizQuestions=[...fieldQuestions(),...silhouetteQuestions(),...photoQuestions()];
+if(quizQuestions.length!==250) console.error("Quiz count error",quizQuestions.length);
+let quizIndex=0,quizScore=0,quizAnswered=false;
+function quizTypeLabel(q){return q.type==="field"?"50 REAL-LIFE FIELD SCENARIOS":q.type==="silhouette"?"100 SILHOUETTE + REGION":"100 PHOTO IDENTIFICATIONS";}
+function renderQuiz(){
+ const q=quizQuestions[quizIndex], card=document.querySelector("#quizCard");
+ quizAnswered=false;
+ card.innerHTML='<div class="quizMeta"><span class="quizType">'+quizTypeLabel(q)+'</span><span>Question '+(quizIndex+1)+' of 250</span><span>Score '+quizScore+'</span></div>'+
+ '<div class="quizPrompt">'+esc(q.prompt)+'</div>'+
+ (q.type==="silhouette"?'<div class="quizVisual">'+silhouetteSVG(q.visual)+'</div>':q.type==="photo"?'<div class="quizVisual" id="quizPhoto"><span>Loading an exact taxon image…</span></div>':'')+
+ '<div class="choices">'+q.choices.map((x,i)=>'<button class="choice" data-i="'+i+'">'+esc(x)+'</button>').join("")+'</div>'+
+ '<div id="quizExplain"></div><div class="quizActions"><button id="nextQ" class="secondary" disabled>'+ (quizIndex===249?"Finish assessment":"Next question →") +'</button><button id="quitQ" class="secondary">Back to course</button></div>';
+ document.querySelectorAll(".choice").forEach(btn=>btn.onclick=()=>answerQuiz(Number(btn.dataset.i)));
+ if(q.type==="photo")loadQuizPhoto(q.visual);
+ document.querySelector("#nextQ").onclick=()=>{if(!quizAnswered)return;if(quizIndex<249){quizIndex++;renderQuiz();}else finishQuiz();};
+ document.querySelector("#quitQ").onclick=()=>{document.querySelector("#practice").classList.add("quizHidden");document.querySelector("#lesson").scrollIntoView({behavior:"smooth"});};
+}
+async function loadQuizPhoto(b){
+ const h=document.querySelector("#quizPhoto");if(!h)return;
+ try{const j=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(b.scientific)).then(r=>r.ok?r.json():null);const img=j?.originalimage?.source||j?.thumbnail?.source;
+ if(img&&document.querySelector("#quizPhoto")===h){const im=document.createElement("img");im.alt=b.common+" ("+b.scientific+")";im.src=img;im.onerror=()=>h.innerHTML="<span>Exact image unavailable for this question.</span>";h.innerHTML="";h.appendChild(im);}
+ else h.innerHTML="<span>Exact taxon image unavailable.</span>";}catch(e){h.innerHTML="<span>Image unavailable; use the field-mark choices.</span>";}
+}
+function answerQuiz(i){
+ if(quizAnswered)return;quizAnswered=true;const q=quizQuestions[quizIndex], chosen=q.choices[i], ok=chosen===q.answer;if(ok)quizScore++;
+ document.querySelectorAll(".choice").forEach((b,n)=>{const val=q.choices[n];if(val===q.answer)b.classList.add("correct");else if(n===i)b.classList.add("wrong");b.disabled=true;});
+ document.querySelector("#quizExplain").innerHTML='<div class="explain"><strong>'+ (ok?"Correct.":"Not quite.")+'</strong> '+esc(q.explain)+'<br><br><strong>Answer:</strong> '+esc(q.answer)+'.</div>';
+ document.querySelector("#nextQ").disabled=false;
+}
+function finishQuiz(){
+ const pct=Math.round(quizScore/250*100);
+ document.querySelector("#quizCard").innerHTML='<div class="quizMeta"><span class="quizType">ASSESSMENT COMPLETE</span></div><p class="quizScore">'+quizScore+' / 250 ('+pct+'%)</p><p>You completed all 250 questions. A strong score should come from distinguishing close regional alternatives, not memorising obvious colour labels.</p><div class="quizActions"><button id="retryQuiz">Restart 250</button><button id="backCourse">Back to course</button></div>';
+ document.querySelector("#retryQuiz").onclick=()=>{quizIndex=0;quizScore=0;renderQuiz();};
+ document.querySelector("#backCourse").onclick=()=>{document.querySelector("#practice").classList.add("quizHidden");document.querySelector("#lesson").scrollIntoView({behavior:"smooth"});};
+}
+function startQuiz(){document.querySelector("#practice").classList.remove("quizHidden");renderQuiz();document.querySelector("#practice").scrollIntoView({behavior:"smooth"});}
+document.querySelector("#practiceBtn").onclick=startQuiz;
+
 document.querySelector("#prev").onclick=()=>{slide=Math.max(0,slide-1);render();};
 document.querySelector("#next").onclick=()=>{slide=Math.min(total-1,slide+1);render();};
 document.addEventListener("keydown",e=>{if(e.key==="ArrowRight")document.querySelector("#next").click();if(e.key==="ArrowLeft")document.querySelector("#prev").click();});
