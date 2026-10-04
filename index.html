@@ -24,7 +24,7 @@ input,select{padding:12px;border:1px solid #cbd5cd;border-radius:9px;background:
 </div>
 <div class="count" id="count"></div><section class="grid" id="grid"></section>
 <section class="sources"><b>Media & accuracy policy</b><br>
-Photos are retrieved from Wikimedia Commons search results at viewing time rather than copied into this repository. Each card also links to Cornell eBird/Macaulay Library for regional photographs and sound recordings, and to Xeno-canto for field recordings. Always check the recording/photo page for its attribution and licence before reusing media outside this course. Species names are aligned to the Bengaluru regional checklist used for this course; local occurrence can be seasonal or habitat-specific.
+Photos are retrieved from Wikimedia Commons search results at viewing time rather than copied into this repository; the site checks the returned title against the requested species name where possible. Each card also links to Cornell eBird/Macaulay Library for regional photographs and sound recordings, and to Xeno-canto for field recordings. Always check the recording/photo page for its attribution and licence before reusing media outside this course. Species names are aligned to the Bengaluru regional checklist used for this course; local occurrence can be seasonal or habitat-specific.
 <br><br><b>Important:</b> this repository intentionally links to authoritative media rather than redistributing third-party recordings. The sound buttons open the relevant recording/search collection so learners can hear the species and inspect attribution.
 </section>
 </main>
@@ -303,7 +303,7 @@ function mediaLinks(b){
  return {
   image:"https://commons.wikimedia.org/w/index.php?search="+q+"&title=Special:MediaSearch&type=image",
   audio:"https://www.xeno-canto.org/explore?query="+q,
-  macaulay:"https://search.macaulaylibrary.org/catalog?taxonCode="+encodeURIComponent(b.scientific)
+  macaulay:"https://search.macaulaylibrary.org/catalog?searchField=species&view=grid
  };
 }
 async function loadImage(card,b){
@@ -320,7 +320,7 @@ async function loadImage(card,b){
 function card(b){
  const c=document.createElement("article");c.className="card";
  const links=mediaLinks(b); const clue=clues[b.common]||("Field lesson: learn the silhouette, primary colours, bill shape, habitat and behaviour first; then confirm with a regional photograph and recording.");
- c.innerHTML='<div class="photo"><span>Loading verified Wikimedia Commons image…</span></div><div class="body"><h2>'+b.id+'. '+b.common+'</h2><div class="sci">'+b.scientific+'</div><span class="tag">'+b.family+'</span><span class="tag">'+b.habitat+'</span><div class="fact"><b>Key field mark:</b> '+clue+'</div><div class="fact"><b>Compare:</b> Use the scientific-name and habitat context, then compare the linked regional photos/recordings before making a difficult identification.</div><div class="actions"><a target="_blank" rel="noopener" href="'+links.image+'">📷 Commons photos</a><a target="_blank" rel="noopener" href="'+links.audio+'">🔊 Xeno-canto audio</a><a class="secondary" target="_blank" rel="noopener" href="'+links.macaulay+'">🎧 Macaulay / eBird</a></div></div>';
+ c.innerHTML='<div class="photo"><span>Loading Wikimedia Commons image…</span></div><div class="body"><h2>'+b.id+'. '+b.common+'</h2><div class="sci">'+b.scientific+'</div><span class="tag">'+b.family+'</span><span class="tag">'+b.habitat+'</span><div class="fact"><b>Key field mark:</b> '+clue+'</div><div class="fact"><b>Compare:</b> Use the scientific-name and habitat context, then compare the linked regional photos/recordings before making a difficult identification.</div><div class="actions"><a target="_blank" rel="noopener" href="'+links.image+'">📷 Commons photos</a><a target="_blank" rel="noopener" href="'+links.audio+'">🔊 Xeno-canto audio</a><a class="secondary" target="_blank" rel="noopener" href="'+links.macaulay+'">🎧 Macaulay / eBird</a></div></div>';
  loadImage(c,b); return c;
 }
 const groups=[...new Set(raw.map(x=>x.family))].sort(); for(const g of groups) group.insertAdjacentHTML("beforeend",'<option>'+g+'</option>');
