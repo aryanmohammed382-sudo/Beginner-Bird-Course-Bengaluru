@@ -479,9 +479,10 @@ function current(){
  return {kind:"bird",data:birds[n],part};
 }
 function goToSlide(nextSlide){
+ const scrollY=window.scrollY;
  slide=Math.max(0,Math.min(total-1,nextSlide));
  render();
- window.scrollTo({top:0,behavior:"smooth"});
+ requestAnimationFrame(()=>window.scrollTo({top:scrollY,left:0,behavior:"auto"}));
 }
 function render(){
  const s=current(), el=document.querySelector("#lesson");
